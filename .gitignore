@@ -6,3 +6,5 @@ server/target/
 server/start-dev.ps1
 server/local-secrets.ps1
 server/.deepseek_key
+questions.json
+server/sql/_q1.json

@@ -77,16 +77,6 @@ mvn spring-boot:run
 
 ---
 
-## 暂时还没装 JDK 17 时
-
-可用 Python 开发服（**不含** DeepSeek 补数）：
-
-```bash
-python server/dev_api.py
-```
-
----
-
 ## 当前接口
 
 | 方法 | 路径 | 说明 |

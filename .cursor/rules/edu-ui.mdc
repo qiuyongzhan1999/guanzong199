@@ -1,0 +1,30 @@
+---
+description: 管综199 页面必须使用现代教育科技风 UI 系统，禁止另写颜色、圆角和字体。
+globs: "{pages,components}/**/*.vue"
+alwaysApply: true
+---
+
+# Edu UI
+
+新页面和改样式只许用 `styles/edu-theme.js` 与 `styles/edu-ui.scss`。不要写局部 hex、宋体、直角卡片、1px 灰边。
+
+- 根节点：`edu-page`
+- 白卡片：`edu-card`；标题 `edu-card-title`
+- 筛选：`edu-chip`，选中加 `on`
+- 指标：`StatRow`，数据为 `{ label, value }[]`，列数用 `columns`
+- 院校行：`SchoolCard`
+- 空态：`EmptyState`
+- 键值：数据数组渲染 `edu-kv`，不要复制一套行样式
+- 强调色只有 signal / good / heat，用 `tone-signal`、`tone-good`、`tone-heat`
+
+导航栏、tabBar 色必须与 `EDU.color.canvas`（#F4F7FB）和 `EDU.color.signal`（#2F6FED）一致。图表色从 `EDU.chart` 取。
+
+```vue
+<!-- 禁止 -->
+<view style="color:#1B3A4B;border:1px solid #ccc">
+
+<!-- 正确 -->
+<view class="edu-page">
+  <StatRow :columns="3" :items="[{ label: '数学', value: '75' }]" />
+</view>
+```

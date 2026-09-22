@@ -1,0 +1,617 @@
+[
+  {
+    "year": 2026,
+    "family": "125100",
+    "majorCodes": [
+      "125100"
+    ],
+    "aTotal": 146,
+    "aEnglish": 35,
+    "aComprehensive": 70,
+    "bTotal": 136,
+    "bEnglish": 30,
+    "bComprehensive": 60,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2026,
+    "family": "125400",
+    "majorCodes": [
+      "125400"
+    ],
+    "aTotal": 151,
+    "aEnglish": 35,
+    "aComprehensive": 70,
+    "bTotal": 141,
+    "bEnglish": 30,
+    "bComprehensive": 60,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2026,
+    "family": "125200",
+    "majorCodes": [
+      "125200"
+    ],
+    "aTotal": 168,
+    "aEnglish": 39,
+    "aComprehensive": 78,
+    "bTotal": 158,
+    "bEnglish": 34,
+    "bComprehensive": 68,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2026,
+    "family": "125300",
+    "majorCodes": [
+      "125300"
+    ],
+    "aTotal": 199,
+    "aEnglish": 51,
+    "aComprehensive": 102,
+    "bTotal": 189,
+    "bEnglish": 46,
+    "bComprehensive": 92,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2026,
+    "family": "125700",
+    "majorCodes": [
+      "125700"
+    ],
+    "aTotal": 199,
+    "aEnglish": 51,
+    "aComprehensive": 102,
+    "bTotal": 189,
+    "bEnglish": 46,
+    "bComprehensive": 92,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2026,
+    "family": "125500",
+    "majorCodes": [
+      "125500"
+    ],
+    "aTotal": 199,
+    "aEnglish": 51,
+    "aComprehensive": 102,
+    "bTotal": 189,
+    "bEnglish": 46,
+    "bComprehensive": 92,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2026,
+    "family": "125600",
+    "majorCodes": [
+      "125600",
+      "125601",
+      "125602",
+      "125603",
+      "125604"
+    ],
+    "aTotal": 166,
+    "aEnglish": 39,
+    "aComprehensive": 78,
+    "bTotal": 156,
+    "bEnglish": 34,
+    "bComprehensive": 68,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202602/20260228/2293449093.html",
+    "sourceName": "教育部｜2026年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125100",
+    "majorCodes": [
+      "125100"
+    ],
+    "aTotal": 151,
+    "aEnglish": 35,
+    "aComprehensive": 70,
+    "bTotal": 141,
+    "bEnglish": 30,
+    "bComprehensive": 60,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125400",
+    "majorCodes": [
+      "125400"
+    ],
+    "aTotal": 151,
+    "aEnglish": 35,
+    "aComprehensive": 70,
+    "bTotal": 141,
+    "bEnglish": 30,
+    "bComprehensive": 60,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125200",
+    "majorCodes": [
+      "125200"
+    ],
+    "aTotal": 164,
+    "aEnglish": 38,
+    "aComprehensive": 76,
+    "bTotal": 154,
+    "bEnglish": 33,
+    "bComprehensive": 66,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125300",
+    "majorCodes": [
+      "125300"
+    ],
+    "aTotal": 194,
+    "aEnglish": 48,
+    "aComprehensive": 96,
+    "bTotal": 184,
+    "bEnglish": 43,
+    "bComprehensive": 86,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125700",
+    "majorCodes": [
+      "125700"
+    ],
+    "aTotal": 194,
+    "aEnglish": 48,
+    "aComprehensive": 96,
+    "bTotal": 184,
+    "bEnglish": 43,
+    "bComprehensive": 86,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125500",
+    "majorCodes": [
+      "125500"
+    ],
+    "aTotal": 191,
+    "aEnglish": 48,
+    "aComprehensive": 96,
+    "bTotal": 181,
+    "bEnglish": 43,
+    "bComprehensive": 86,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2025,
+    "family": "125600",
+    "majorCodes": [
+      "125600",
+      "125601",
+      "125602",
+      "125603",
+      "125604"
+    ],
+    "aTotal": 162,
+    "aEnglish": 38,
+    "aComprehensive": 76,
+    "bTotal": 152,
+    "bEnglish": 33,
+    "bComprehensive": 66,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202502/20250224/2293352975.html",
+    "sourceName": "教育部｜2025年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125100",
+    "majorCodes": [
+      "125100"
+    ],
+    "aTotal": 162,
+    "aEnglish": 39,
+    "aComprehensive": 78,
+    "bTotal": 152,
+    "bEnglish": 34,
+    "bComprehensive": 68,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125400",
+    "majorCodes": [
+      "125400"
+    ],
+    "aTotal": 162,
+    "aEnglish": 39,
+    "aComprehensive": 78,
+    "bTotal": 152,
+    "bEnglish": 34,
+    "bComprehensive": 68,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125200",
+    "majorCodes": [
+      "125200"
+    ],
+    "aTotal": 173,
+    "aEnglish": 43,
+    "aComprehensive": 86,
+    "bTotal": 163,
+    "bEnglish": 38,
+    "bComprehensive": 76,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125300",
+    "majorCodes": [
+      "125300"
+    ],
+    "aTotal": 201,
+    "aEnglish": 52,
+    "aComprehensive": 104,
+    "bTotal": 191,
+    "bEnglish": 47,
+    "bComprehensive": 94,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125700",
+    "majorCodes": [
+      "125700"
+    ],
+    "aTotal": 201,
+    "aEnglish": 52,
+    "aComprehensive": 104,
+    "bTotal": 191,
+    "bEnglish": 47,
+    "bComprehensive": 94,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125500",
+    "majorCodes": [
+      "125500"
+    ],
+    "aTotal": 198,
+    "aEnglish": 51,
+    "aComprehensive": 102,
+    "bTotal": 188,
+    "bEnglish": 46,
+    "bComprehensive": 92,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2024,
+    "family": "125600",
+    "majorCodes": [
+      "125600",
+      "125601",
+      "125602",
+      "125603",
+      "125604"
+    ],
+    "aTotal": 176,
+    "aEnglish": 43,
+    "aComprehensive": 86,
+    "bTotal": 166,
+    "bEnglish": 38,
+    "bComprehensive": 76,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202403/20240312/2293269492.html",
+    "sourceName": "教育部｜2024年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125100",
+    "majorCodes": [
+      "125100"
+    ],
+    "aTotal": 167,
+    "aEnglish": 41,
+    "aComprehensive": 82,
+    "bTotal": 157,
+    "bEnglish": 36,
+    "bComprehensive": 72,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125400",
+    "majorCodes": [
+      "125400"
+    ],
+    "aTotal": 167,
+    "aEnglish": 41,
+    "aComprehensive": 82,
+    "bTotal": 157,
+    "bEnglish": 36,
+    "bComprehensive": 72,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125200",
+    "majorCodes": [
+      "125200"
+    ],
+    "aTotal": 175,
+    "aEnglish": 44,
+    "aComprehensive": 88,
+    "bTotal": 165,
+    "bEnglish": 39,
+    "bComprehensive": 78,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125300",
+    "majorCodes": [
+      "125300"
+    ],
+    "aTotal": 197,
+    "aEnglish": 51,
+    "aComprehensive": 102,
+    "bTotal": 187,
+    "bEnglish": 46,
+    "bComprehensive": 92,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125700",
+    "majorCodes": [
+      "125700"
+    ],
+    "aTotal": 197,
+    "aEnglish": 51,
+    "aComprehensive": 102,
+    "bTotal": 187,
+    "bEnglish": 46,
+    "bComprehensive": 92,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125500",
+    "majorCodes": [
+      "125500"
+    ],
+    "aTotal": 198,
+    "aEnglish": 52,
+    "aComprehensive": 104,
+    "bTotal": 188,
+    "bEnglish": 47,
+    "bComprehensive": 94,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2023,
+    "family": "125600",
+    "majorCodes": [
+      "125600",
+      "125601",
+      "125602",
+      "125603",
+      "125604"
+    ],
+    "aTotal": 178,
+    "aEnglish": 44,
+    "aComprehensive": 88,
+    "bTotal": 168,
+    "bEnglish": 39,
+    "bComprehensive": 78,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202303/20230310/2265487779.html",
+    "sourceName": "教育部｜2023年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125100",
+    "majorCodes": [
+      "125100"
+    ],
+    "aTotal": 170,
+    "aEnglish": 42,
+    "aComprehensive": 84,
+    "bTotal": 160,
+    "bEnglish": 37,
+    "bComprehensive": 74,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125400",
+    "majorCodes": [
+      "125400"
+    ],
+    "aTotal": 170,
+    "aEnglish": 42,
+    "aComprehensive": 84,
+    "bTotal": 160,
+    "bEnglish": 37,
+    "bComprehensive": 74,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125200",
+    "majorCodes": [
+      "125200"
+    ],
+    "aTotal": 178,
+    "aEnglish": 45,
+    "aComprehensive": 90,
+    "bTotal": 168,
+    "bEnglish": 40,
+    "bComprehensive": 80,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125300",
+    "majorCodes": [
+      "125300"
+    ],
+    "aTotal": 193,
+    "aEnglish": 50,
+    "aComprehensive": 100,
+    "bTotal": 183,
+    "bEnglish": 45,
+    "bComprehensive": 90,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125700",
+    "majorCodes": [
+      "125700"
+    ],
+    "aTotal": 194,
+    "aEnglish": 50,
+    "aComprehensive": 100,
+    "bTotal": 184,
+    "bEnglish": 45,
+    "bComprehensive": 90,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125500",
+    "majorCodes": [
+      "125500"
+    ],
+    "aTotal": 194,
+    "aEnglish": 50,
+    "aComprehensive": 100,
+    "bTotal": 184,
+    "bEnglish": 45,
+    "bComprehensive": 90,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  },
+  {
+    "year": 2022,
+    "family": "125600",
+    "majorCodes": [
+      "125600",
+      "125601",
+      "125602",
+      "125603",
+      "125604"
+    ],
+    "aTotal": 189,
+    "aEnglish": 47,
+    "aComprehensive": 94,
+    "bTotal": 179,
+    "bEnglish": 42,
+    "bComprehensive": 84,
+    "sourceUrl": "https://yz.chsi.com.cn/kyzx/kp/202203/20220311/2172246781.html",
+    "sourceName": "教育部｜2022年国家线（研招网）",
+    "syncedAt": "2026-09-21",
+    "provider": "official"
+  }
+]

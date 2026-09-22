@@ -1,0 +1,126 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "管综上岸通"
+			}
+		},
+		{
+			"path": "pages/schools/index",
+			"style": {
+				"navigationBarTitleText": "院校库",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 120
+			}
+		},
+		{
+			"path": "pages/schools/detail",
+			"style": {
+				"navigationBarTitleText": "院校详情"
+			}
+		},
+		{
+			"path": "pages/intent/index",
+			"style": {
+				"navigationBarTitleText": "智能择校"
+			}
+		},
+		{
+			"path": "pages/intent/result",
+			"style": {
+				"navigationBarTitleText": "智能择校"
+			}
+		},
+		{
+			"path": "pages/ai-essay/index",
+			"style": {
+				"navigationBarTitleText": "AI 批改"
+			}
+		},
+		{
+			"path": "pages/ai-essay/result",
+			"style": {
+				"navigationBarTitleText": "批改结果",
+				"enableShareAppMessage": true,
+				"enableShareTimeline": true
+			}
+		},
+		{
+			"path": "pages/ai-essay/human",
+			"style": {
+				"navigationBarTitleText": "人工批改"
+			}
+		},
+		{
+			"path": "pages/practice/index",
+			"style": {
+				"navigationBarTitleText": "管综刷题"
+			}
+		},
+		{
+			"path": "pages/practice/quiz",
+			"style": {
+				"navigationBarTitleText": "答题"
+			}
+		},
+		{
+			"path": "pages/practice/favorites",
+			"style": {
+				"navigationBarTitleText": "收藏夹"
+			}
+		},
+		{
+			"path": "pages/practice/wrong",
+			"style": {
+				"navigationBarTitleText": "错题本"
+			}
+		},
+		{
+			"path": "pages/practice/stats",
+			"style": {
+				"navigationBarTitleText": "练习统计"
+			}
+		},
+		{
+			"path": "pages/mine/index",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "管综上岸通",
+		"navigationBarBackgroundColor": "#F4F7FB",
+		"backgroundColor": "#F4F7FB",
+		"backgroundTextStyle": "dark"
+	},
+	"tabBar": {
+		"color": "#8B97A8",
+		"selectedColor": "#2F6FED",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "white",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/tab/home.png",
+				"selectedIconPath": "static/tab/home-on.png"
+			},
+			{
+				"pagePath": "pages/schools/index",
+				"text": "院校库",
+				"iconPath": "static/tab/schools.png",
+				"selectedIconPath": "static/tab/schools-on.png"
+			},
+			{
+				"pagePath": "pages/mine/index",
+				"text": "我的",
+				"iconPath": "static/tab/mine.png",
+				"selectedIconPath": "static/tab/mine-on.png"
+			}
+		]
+	},
+	"uniIdRouter": {}
+}

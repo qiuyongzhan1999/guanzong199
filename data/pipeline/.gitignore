@@ -1,0 +1,4 @@
+queue/
+cache/
+drafts/*.json
+!drafts/.gitkeep

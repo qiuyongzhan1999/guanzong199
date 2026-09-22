@@ -1,0 +1,8 @@
+node_modules/
+unpackage/
+.hbuilderx/
+.DS_Store
+server/target/
+server/start-dev.ps1
+server/local-secrets.ps1
+server/.deepseek_key

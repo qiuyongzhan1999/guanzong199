@@ -1,181 +1,113 @@
 <template>
-	<view class="edu-page">
-		<view class="edu-card edu-practice-hero">
-			<text class="edu-kicker">{{ subject === 'english' ? '英语二刷题' : '管综刷题' }}</text>
-			<text class="edu-card-title">{{ subject === 'english' ? '词汇 · 完形 · 阅读' : '数学 · 逻辑' }}</text>
-			<text class="edu-hint">按题型与知识点筛选后开练，错题会进错题本。</text>
-			<StatRow :columns="3" :items="statItems" />
+	<view class="edu-page edu-practice-home">
+		<view class="edu-section-head">
+			<view class="edu-section-bar" />
+			<text class="edu-section-title">刷题开练</text>
+			<text class="edu-section-hint">管综 · 英语二</text>
 		</view>
 
-		<view class="edu-card">
-			<text class="edu-card-title">题型</text>
-			<view class="edu-chips">
-				<view
-					class="edu-chip"
-					v-for="t in types"
-					:key="t.id"
-					:class="{ on: type === t.id }"
-					@tap="onType(t.id)"
-				>{{ t.label }}</view>
+		<view
+			class="edu-subject-card"
+			v-for="item in subjects"
+			:key="item.id"
+			:class="'tone-' + item.tone"
+			@tap="openSubject(item)"
+		>
+			<view class="edu-subject-card-glow" />
+			<view class="edu-subject-card-top">
+				<text class="edu-subject-card-name">{{ item.name }}</text>
+				<text class="edu-go tone-on">›</text>
+			</view>
+			<text class="edu-subject-card-sub">今日 {{ item.today }} · 错题 {{ item.wrong }} · 正确率 {{ item.accuracy }}%</text>
+			<view class="edu-hp-bar">
+				<view class="edu-hp-fill" :style="{ width: item.accuracy + '%' }" />
 			</view>
 		</view>
 
-		<view class="edu-card">
-			<text class="edu-card-title">知识点</text>
-			<view class="edu-chips" v-if="moduleChips.length">
-				<view
-					class="edu-chip"
-					v-for="m in moduleChips"
-					:key="m.id"
-					:class="{ on: knowledgePoint === m.id }"
-					@tap="knowledgePoint = m.id"
-				>{{ m.label }}</view>
+		<view class="edu-card edu-practice-tools">
+			<view class="edu-menu-row" @tap="go('/pages/practice/favorites')">
+				<view class="edu-practice-tool-copy">
+					<text class="edu-menu-title">收藏夹</text>
+					<text class="edu-muted">收藏过的题随时重做</text>
+				</view>
+				<text class="edu-go">›</text>
 			</view>
-			<text class="edu-hint" v-else>加载知识点中…</text>
-		</view>
-
-		<view class="edu-btn" :class="{ off: loading }" @tap="start">
-			{{ loading ? '准备中…' : '开始练习' }}
-		</view>
-
-		<view class="edu-practice-links">
-			<view class="edu-chip on" @tap="go('/pages/practice/wrong?subject=' + subject)">错题本</view>
-			<view class="edu-chip on" @tap="go('/pages/practice/favorites?subject=' + subject)">收藏</view>
-			<view class="edu-chip on" @tap="go('/pages/practice/stats?subject=' + subject)">统计</view>
+			<view class="edu-menu-row" @tap="go('/pages/practice/wrong')">
+				<view class="edu-practice-tool-copy">
+					<text class="edu-menu-title">错题本</text>
+					<text class="edu-muted">连续答对 2 次自动移出</text>
+				</view>
+				<text class="edu-go">›</text>
+			</view>
+			<view class="edu-menu-row" @tap="go('/pages/practice/history')">
+				<view class="edu-practice-tool-copy">
+					<text class="edu-menu-title">历史记录</text>
+					<text class="edu-muted">最近作答轨迹</text>
+				</view>
+				<text class="edu-go">›</text>
+			</view>
+			<view class="edu-menu-row" @tap="go('/pages/practice/years')">
+				<view class="edu-practice-tool-copy">
+					<text class="edu-menu-title">历年真题</text>
+					<text class="edu-muted">按年份刷管综真题</text>
+				</view>
+				<text class="edu-go">›</text>
+			</view>
+			<view class="edu-menu-row" @tap="go('/pages/practice/stats')">
+				<view class="edu-practice-tool-copy">
+					<text class="edu-menu-title">数据统计</text>
+					<text class="edu-muted">雷达图与正确率趋势</text>
+				</view>
+				<text class="edu-go">›</text>
+			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import StatRow from '../../components/ui/StatRow.vue'
-	import { practiceHealth, practiceModules, practiceOverview, practiceQuestions } from '../../utils/api.js'
+	import { practiceHealth, practiceSubjects } from '../../utils/api.js'
 	import { getPracticeUserKey } from '../../utils/practice-user.js'
 
-	const TYPES = {
-		guanzong: [
-			{ id: '', label: '全部' },
-			{ id: '数学', label: '数学' },
-			{ id: '逻辑', label: '逻辑' }
-		],
-		english: [
-			{ id: '', label: '全部' },
-			{ id: '词汇', label: '词汇' },
-			{ id: '完形', label: '完形' },
-			{ id: '阅读', label: '阅读' }
-		]
-	}
+	const TONE = { math: 'signal', logic: 'heat', english: 'good' }
 
 	export default {
-		components: { StatRow },
 		data() {
 			return {
-				subject: 'guanzong',
-				type: '',
-				knowledgePoint: '',
-				modules: [],
-				stats: { today: 0, wrongOpen: 0, accuracy: 0 },
-				loading: false
+				subjects: []
 			}
-		},
-		computed: {
-			types() {
-				return TYPES[this.subject] || TYPES.guanzong
-			},
-			moduleChips() {
-				const list = [{ id: '', label: '全部' }]
-				;(this.modules || []).forEach((name) => {
-					if (name) list.push({ id: name, label: name })
-				})
-				return list
-			},
-			statItems() {
-				return [
-					{ label: '今日', value: String(this.stats.today || 0) },
-					{ label: '错题', value: String(this.stats.wrongOpen || 0) },
-					{ label: '正确率', value: (this.stats.accuracy || 0) + '%' }
-				]
-			}
-		},
-		onLoad(q) {
-			if (q && q.subject) this.subject = q.subject === 'english' ? 'english' : 'guanzong'
-			this.type = ''
-			this.knowledgePoint = ''
 		},
 		onShow() {
-			this.loadStats()
-			this.loadModules()
+			this.load()
 		},
 		methods: {
-			onType(id) {
-				this.type = id
-				this.knowledgePoint = ''
-				this.loadModules()
-			},
-			async loadModules() {
-				try {
-					const data = await practiceModules({
-						subject: this.subject,
-						type: this.type || undefined
-					})
-					this.modules = (data && data.items) || []
-					if (this.knowledgePoint && this.modules.indexOf(this.knowledgePoint) < 0) {
-						this.knowledgePoint = ''
-					}
-				} catch (e) {
-					this.modules = []
-				}
-			},
-			async loadStats() {
+			async load() {
 				try {
 					await practiceHealth()
-					const data = await practiceOverview({
-						userKey: getPracticeUserKey(),
-						subject: this.subject
+					const data = await practiceSubjects(getPracticeUserKey())
+					const items = (data && data.items) || []
+					this.subjects = items.map((s) => {
+						const p = s.progress || {}
+						return {
+							id: s.id,
+							code: s.code,
+							name: s.name,
+							tone: TONE[s.code] || 'signal',
+							today: p.todayCount || 0,
+							wrong: p.wrongCount || 0,
+							accuracy: p.accuracy || 0
+						}
 					})
-					if (data && data.ok) {
-						this.stats = Object.assign({}, data.stats || {})
-					}
 				} catch (e) {
-					/* ignore */
+					uni.showToast({ title: '刷题服务未就绪', icon: 'none' })
 				}
+			},
+			openSubject(item) {
+				uni.navigateTo({
+					url: '/pages/practice/chapters?subject_id=' + item.id + '&name=' + encodeURIComponent(item.name)
+				})
 			},
 			go(url) {
 				uni.navigateTo({ url })
-			},
-			async start() {
-				if (this.loading) return
-				this.loading = true
-				try {
-					const data = await practiceQuestions({
-						subject: this.subject,
-						type: this.type || undefined,
-						knowledgePoint: this.knowledgePoint || undefined,
-						mode: 'random',
-						limit: 20
-					})
-					if (!data || data.ok === false) {
-						uni.showToast({ title: (data && data.error) || '拉题失败', icon: 'none' })
-						return
-					}
-					const items = data.items || []
-					if (!items.length) {
-						uni.showToast({ title: '该模块暂无题目', icon: 'none' })
-						return
-					}
-					uni.setStorageSync('practiceSession', {
-						subject: this.subject,
-						type: this.type,
-						knowledgePoint: this.knowledgePoint,
-						mode: 'random',
-						ids: items.map((q) => q.id),
-						index: 0
-					})
-					uni.navigateTo({ url: '/pages/practice/quiz' })
-				} catch (e) {
-					uni.showToast({ title: '网络错误，请确认后端已启动', icon: 'none' })
-				} finally {
-					this.loading = false
-				}
 			}
 		}
 	}

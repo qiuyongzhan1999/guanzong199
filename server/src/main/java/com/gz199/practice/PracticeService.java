@@ -1,234 +1,290 @@
 package com.gz199.practice;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gz199.config.AppProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 刷题业务层：科目进度、答题判分、错题自动移出、掌握度。
+ *
+ * 错误码约定（code）：
+ * 0 成功；40001 参数错误；40401 资源不存在；50001 表未就绪
+ */
 @Service
 public class PracticeService {
-    private static final Logger log = LoggerFactory.getLogger(PracticeService.class);
+    public static final int OK = 0;
+    public static final int ERR_PARAM = 40001;
+    public static final int ERR_NOT_FOUND = 40401;
+    public static final int ERR_TABLES = 50001;
 
     private final PracticeRepository repo;
-    private final AppProperties appProps;
-    private final ObjectMapper mapper;
 
-    public PracticeService(PracticeRepository repo, AppProperties appProps, ObjectMapper mapper) {
+    public PracticeService(PracticeRepository repo) {
         this.repo = repo;
-        this.appProps = appProps;
-        this.mapper = mapper;
     }
 
-    public Map<String, Object> ensureSeeded() {
-        Map<String, Object> out = new LinkedHashMap<>();
+    private Map<String, Object> gate() {
         if (!repo.tablesReady()) {
-            out.put("ok", false);
-            out.put("error", "刷题表未建立，请先执行 server/sql/practice_tables.sql");
-            return out;
+            return err(ERR_TABLES, "刷题表未建立，请执行 server/sql/practice_tables.sql");
         }
-        int n = repo.countQuestions();
-        out.put("tablesReady", true);
-        out.put("questionCount", n);
-        if (n > 0) {
-            out.put("ok", true);
-            out.put("seeded", false);
-            return out;
-        }
-        int added = seedFromFile();
-        out.put("ok", true);
-        out.put("seeded", true);
-        out.put("added", added);
-        out.put("questionCount", repo.countQuestions());
-        return out;
+        return null;
     }
 
-    /** 清空并重新灌入管综样例题（修复编码后用） */
-    public Map<String, Object> reseed() {
-        Map<String, Object> out = new LinkedHashMap<>();
-        if (!repo.tablesReady()) {
-            out.put("ok", false);
-            out.put("error", "刷题表未建立");
-            return out;
-        }
-        repo.clearQuestions();
-        int added = seedFromFile();
-        out.put("ok", true);
-        out.put("added", added);
-        out.put("questionCount", repo.countQuestions());
-        return out;
-    }
-
-    private int seedFromFile() {
-        Path dir = Path.of(appProps.getDataDir(), "practice");
-        if (!Files.isDirectory(dir)) {
-            log.warn("practice dir missing: {}", dir);
-            return 0;
-        }
-        int n = 0;
-        try (var stream = Files.list(dir)) {
-            List<Path> files = stream
-                    .filter(p -> {
-                        String name = p.getFileName().toString();
-                        return name.endsWith(".json")
-                                && name.contains("-bulk-");
-                    })
-                    .sorted()
-                    .toList();
-            for (Path path : files) {
-                n += seedOneFile(path);
-            }
-        } catch (Exception e) {
-            log.error("list seed files failed", e);
-        }
-        log.info("seeded total {} questions from {}", n, dir);
-        return n;
-    }
-
-    private int seedOneFile(Path path) {
-        try {
-            List<Map<String, Object>> list = mapper.readValue(
-                    Files.readString(path, StandardCharsets.UTF_8),
-                    new TypeReference<>() {}
-            );
-            if (list == null || list.isEmpty()) return 0;
-            int n = repo.insertQuestionsBatch(list);
-            log.info("seeded {} from {}", n, path.getFileName());
-            return n;
-        } catch (Exception e) {
-            log.error("seed failed: " + path, e);
-            return 0;
-        }
-    }
-
-    public Map<String, Object> listQuestions(String subject, String type, String kp, String mode, Integer limit) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        int lim = limit == null ? 20 : limit;
-        List<Map<String, Object>> items = repo.listQuestions(blankToNull(subject), blankToNull(type), blankToNull(kp), mode, lim);
+    private static Map<String, Object> ok(Map<String, Object> data) {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("ok", true);
-        out.put("items", items);
-        out.put("total", items.size());
+        out.put("code", OK);
+        if (data != null) out.putAll(data);
         return out;
     }
 
-    public Map<String, Object> modules(String subject, String type) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        List<String> items = repo.listModules(blankToNull(subject), blankToNull(type));
+    private static Map<String, Object> err(int code, String message) {
         Map<String, Object> out = new LinkedHashMap<>();
-        out.put("ok", true);
-        out.put("items", items);
+        out.put("ok", false);
+        out.put("code", code);
+        out.put("error", message);
         return out;
     }
 
+    /** GET /api/subjects */
+    public Map<String, Object> subjects(String userKey) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        String key = str(userKey, "guest");
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (Map<String, Object> s : repo.listSubjects()) {
+            Map<String, Object> row = new LinkedHashMap<>(s);
+            long id = toLong(s.get("id"));
+            row.put("progress", repo.subjectProgress(key, id));
+            items.add(row);
+        }
+        return ok(Map.of("items", items));
+    }
+
+    /** GET /api/chapters?subject_id= */
+    public Map<String, Object> chapters(String userKey, Long subjectId) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        if (subjectId == null || subjectId <= 0) return err(ERR_PARAM, "subject_id 必填");
+        if (repo.findSubject(subjectId) == null) return err(ERR_NOT_FOUND, "科目不存在");
+        long uid = PracticeRepository.toUserId(str(userKey, "guest"));
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (Map<String, Object> c : repo.listChapters(subjectId)) {
+            Map<String, Object> row = new LinkedHashMap<>(c);
+            long cid = toLong(c.get("id"));
+            Double mastery = repo.chapterMastery(uid, cid);
+            row.put("masteryRate", mastery);
+            row.put("questionCount", repo.countQuestionsInChapter(cid));
+            items.add(row);
+        }
+        return ok(Map.of("subjectId", subjectId, "items", items));
+    }
+
+    /** GET /api/knowledge-points?chapter_id= */
+    public Map<String, Object> knowledgePoints(Long chapterId) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        if (chapterId == null || chapterId <= 0) return err(ERR_PARAM, "chapter_id 必填");
+        if (repo.findChapter(chapterId) == null) return err(ERR_NOT_FOUND, "章节不存在");
+        return ok(Map.of("chapterId", chapterId, "items", repo.listKnowledgePoints(chapterId)));
+    }
+
+    /** GET /api/questions */
+    public Map<String, Object> listQuestions(
+            Long subjectId, Long chapterId, Long kpId,
+            Integer difficulty, String questionType,
+            String mode, Integer page, Integer pageSize
+    ) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        int p = page == null ? 1 : page;
+        int size = pageSize == null ? 20 : pageSize;
+        String m = mode == null ? "order" : mode;
+        List<Map<String, Object>> items = repo.listQuestions(
+                subjectId, chapterId, kpId, difficulty, questionType, m, p, size
+        );
+        int total = repo.countFiltered(subjectId, chapterId, kpId, difficulty, questionType);
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("items", items);
+        data.put("total", total);
+        data.put("page", p);
+        data.put("pageSize", Math.max(1, Math.min(size, 50)));
+        return ok(data);
+    }
+
+    /** GET /api/questions/{id} */
     public Map<String, Object> getQuestion(long id, String userKey) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
+        Map<String, Object> g = gate();
+        if (g != null) return g;
         Map<String, Object> q = repo.findQuestion(id, false);
-        if (q == null) {
-            return Map.of("ok", false, "error", "题目不存在");
-        }
+        if (q == null) return err(ERR_NOT_FOUND, "题目不存在");
         if (userKey != null && !userKey.isBlank()) {
             q.put("favorited", repo.isFavorite(userKey, id));
         }
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("ok", true);
-        out.put("item", q);
-        return out;
+        return ok(Map.of("item", q));
     }
 
+    /** GET /api/questions/years */
+    public Map<String, Object> listYears() {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        List<Map<String, Object>> items = new ArrayList<>();
+        for (Map<String, Object> row : repo.listYears()) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("year", row.get("year"));
+            m.put("count", row.get("count"));
+            items.add(m);
+        }
+        return ok(Map.of("items", items));
+    }
+
+    /** GET /api/questions/by-year?year=2024 */
+    public Map<String, Object> listQuestionsByYear(int year) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        if (year <= 0) return err(ERR_PARAM, "year 必填");
+        List<Long> ids = repo.listQuestionIdsByYear(year);
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("ids", ids);
+        data.put("year", year);
+        data.put("total", ids.size());
+        return ok(data);
+    }
+
+    /** POST /api/questions/submit */
     public Map<String, Object> submit(Map<String, Object> body) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        if (body == null) body = Map.of();
 
         String userKey = str(body.get("userKey"), "guest");
-        long questionId = toLong(body.get("questionId"));
-        String answer = str(body.get("answer"), "").trim().toUpperCase();
-        String mode = str(body.get("mode"), "order");
-        Integer timeMs = body.get("timeSpent") == null ? null : toInt(body.get("timeSpent"));
+        long questionId = toLong(first(body, "questionId", "question_id"));
+        String answer = str(first(body, "answer", "userAnswer"), "").trim().toUpperCase();
+        Integer timeMs = null;
+        Object ts = first(body, "timeSpent", "time_spent_ms");
+        if (ts != null) timeMs = toInt(ts);
+
+        if (questionId <= 0 || answer.isEmpty()) {
+            return err(ERR_PARAM, "questionId 与 answer 必填");
+        }
 
         Map<String, Object> full = repo.findQuestion(questionId, true);
-        if (full == null) {
-            return Map.of("ok", false, "error", "题目不存在");
-        }
+        if (full == null) return err(ERR_NOT_FOUND, "题目不存在");
+
         String right = str(full.get("answer"), "").trim().toUpperCase();
         boolean correct = right.equals(answer);
 
-        repo.insertAnswer(userKey, questionId, answer, correct, timeMs, mode);
-        repo.upsertWrong(userKey, questionId, correct);
-        repo.upsertKnowledge(userKey, str(full.get("subject"), ""), str(full.get("knowledgePoint"), ""), correct);
+        repo.insertAnswer(userKey, questionId, answer, correct, timeMs);
+        Map<String, Object> wrongInfo = repo.applyWrongBook(userKey, questionId, correct);
+        long kpId = toLong(full.get("knowledgePointId"));
+        repo.upsertKnowledge(userKey, kpId, correct);
 
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("ok", true);
-        out.put("correct", correct);
-        out.put("answer", right);
-        out.put("analysis", full.get("analysis"));
-        out.put("analysisIdea", full.get("analysisIdea"));
-        out.put("analysisKp", full.get("analysisKp"));
-        out.put("favorited", repo.isFavorite(userKey, questionId));
-        return out;
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("correct", correct);
+        data.put("answer", right);
+        data.put("analysis", full.get("analysis"));
+        data.put("analysisIdea", full.get("analysisIdea"));
+        data.put("favorited", repo.isFavorite(userKey, questionId));
+        data.put("wrongUpdated", wrongInfo.get("updatedWrong"));
+        data.put("autoRemoved", wrongInfo.get("autoRemoved"));
+        data.put("consecutiveCorrect", wrongInfo.get("consecutiveCorrect"));
+        data.put("wrongCount", wrongInfo.get("wrongCount"));
+        data.put("masteryUpdated", kpId > 0);
+        return ok(data);
     }
 
+    /** POST /api/favorites/toggle */
     public Map<String, Object> toggleFavorite(Map<String, Object> body) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        if (body == null) body = Map.of();
         String userKey = str(body.get("userKey"), "guest");
-        long questionId = toLong(body.get("questionId"));
+        long questionId = toLong(first(body, "questionId", "question_id"));
+        if (questionId <= 0) return err(ERR_PARAM, "questionId 必填");
+        if (repo.findQuestion(questionId, false) == null) return err(ERR_NOT_FOUND, "题目不存在");
         boolean on = repo.toggleFavorite(userKey, questionId);
-        return Map.of("ok", true, "favorited", on);
+        return ok(Map.of("favorited", on));
     }
 
-    public Map<String, Object> favorites(String userKey, String subject) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        return Map.of("ok", true, "items", repo.listFavorites(str(userKey, "guest"), blankToNull(subject)));
+    /** GET /api/favorites */
+    public Map<String, Object> favorites(String userKey, Long subjectId, Long chapterId) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        return ok(Map.of(
+                "items",
+                repo.listFavorites(str(userKey, "guest"), subjectId, chapterId)
+        ));
     }
 
-    public Map<String, Object> wrongList(String userKey, String subject, Integer status) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        int st = status == null ? 0 : status;
-        return Map.of("ok", true, "items", repo.listWrong(str(userKey, "guest"), blankToNull(subject), st));
+    /** GET /api/wrong-questions */
+    public Map<String, Object> wrongQuestions(String userKey, Long subjectId, String sort) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        return ok(Map.of(
+                "items",
+                repo.listWrong(str(userKey, "guest"), subjectId, sort)
+        ));
     }
 
-    public Map<String, Object> master(Map<String, Object> body) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        String userKey = str(body.get("userKey"), "guest");
-        long questionId = toLong(body.get("questionId"));
-        repo.markMastered(userKey, questionId);
-        return Map.of("ok", true);
+    /** GET /api/stats/knowledge */
+    public Map<String, Object> statsKnowledge(String userKey, Long subjectId) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        List<Map<String, Object>> items = repo.knowledgeRadar(str(userKey, "guest"), subjectId);
+        // 雷达图精简：取有作答或前 12 个
+        List<Map<String, Object>> radar = new ArrayList<>();
+        for (Map<String, Object> it : items) {
+            int total = toInt(it.get("totalCount"));
+            if (total > 0) radar.add(it);
+        }
+        if (radar.isEmpty()) {
+            radar = items.size() > 12 ? items.subList(0, 12) : items;
+        } else if (radar.size() > 12) {
+            radar = radar.subList(0, 12);
+        }
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("items", items);
+        data.put("radar", radar);
+        return ok(data);
     }
 
-    public Map<String, Object> overview(String userKey, String subject) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        Map<String, Object> stats = repo.overview(str(userKey, "guest"), blankToNull(subject));
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("ok", true);
-        out.put("stats", stats);
-        out.put("questionCount", repo.countQuestions(blankToNull(subject)));
-        return out;
+    /** GET /api/stats/overview */
+    public Map<String, Object> statsOverview(String userKey, Long subjectId) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        String key = str(userKey, "guest");
+        Map<String, Object> stats = repo.overview(key, subjectId);
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("stats", stats);
+        data.put("trend", repo.accuracyTrend(key, subjectId, 14));
+        return ok(data);
     }
 
-    public Map<String, Object> knowledge(String userKey, String subject) {
-        Map<String, Object> gate = ensureSeeded();
-        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
-        return Map.of("ok", true, "items", repo.knowledgeStats(str(userKey, "guest"), blankToNull(subject)));
+    /** GET /api/stats/history 答题历史 */
+    public Map<String, Object> history(String userKey, Long subjectId, Integer limit) {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        int lim = limit == null ? 50 : limit;
+        return ok(Map.of("items", repo.listHistory(str(userKey, "guest"), subjectId, lim)));
     }
 
-    private static String blankToNull(String s) {
-        return s == null || s.isBlank() ? null : s.trim();
+    /** 健康检查 */
+    public Map<String, Object> health() {
+        Map<String, Object> g = gate();
+        if (g != null) return g;
+        return ok(Map.of(
+                "tablesReady", true,
+                "questionCount", repo.countQuestions(null),
+                "subjectCount", repo.listSubjects().size()
+        ));
+    }
+
+    private static Object first(Map<String, Object> body, String a, String b) {
+        if (body.containsKey(a) && body.get(a) != null) return body.get(a);
+        return body.get(b);
     }
 
     private static String str(Object o, String dft) {

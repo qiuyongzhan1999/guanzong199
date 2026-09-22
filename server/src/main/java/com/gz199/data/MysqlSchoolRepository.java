@@ -406,4 +406,31 @@ public class MysqlSchoolRepository {
         }
         return false;
     }
+
+    public List<Map<String, Object>> listNationLines(Integer year, String majorCode) {
+        StringBuilder sql = new StringBuilder("SELECT year, family, major_codes_json, a_total AS aTotal, a_english AS aEnglish, a_comprehensive AS aComprehensive, b_total AS bTotal, b_english AS bEnglish, b_comprehensive AS bComprehensive, source_url AS sourceUrl, source_name AS sourceName, synced_at AS syncedAt FROM nation_lines WHERE 1=1");
+        List<Object> args = new ArrayList<>();
+        if (year != null) {
+            sql.append(" AND year=?");
+            args.add(year);
+        }
+        sql.append(" ORDER BY year DESC, family");
+        List<Map<String, Object>> rows = jdbc.queryForList(sql.toString(), args.toArray());
+        if (majorCode == null) return rows;
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Map<String, Object> row : rows) {
+            if (codesContain(row.get("major_codes_json"), majorCode) || majorCode.equals(String.valueOf(row.get("family")))) {
+                out.add(row);
+            }
+        }
+        return out;
+    }
+
+    public List<Map<String, Object>> listCatalogBySchool(String schoolCode) {
+        return jdbc.queryForList(
+            "SELECT school_code AS schoolCode, major_code AS majorCode, major_name AS majorName, study_mode AS studyMode FROM school_catalog WHERE school_code=?",
+            schoolCode
+        );
+    }
 }
+

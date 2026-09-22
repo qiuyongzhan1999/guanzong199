@@ -46,7 +46,7 @@ public class DeepSeekClient {
         body.put("model", props.getModel());
         body.put("stream", false);
         body.put("max_tokens", Math.max(512, maxTokens));
-        // V4 默认开思考；择校/批改只要正文，关掉思考，也不走 Responses/web_search
+        // V4 默认开思考；择校/批改只要正文，关掉思考（不走联网搜索）
         body.putObject("thinking").put("type", "disabled");
         ArrayNode messages = body.putArray("messages");
         messages.addObject().put("role", "system").put("content", systemPrompt);

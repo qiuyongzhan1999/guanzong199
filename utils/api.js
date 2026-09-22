@@ -3,7 +3,7 @@
  */
 // 真机/局域网预览必须用电脑局域网 IP，不能写 127.0.0.1（那是手机自己）。
 // 电脑浏览器本地调试也可改回 http://127.0.0.1:8080
-export const API_BASE = 'http://10.85.161.209:8080'
+export const API_BASE = 'http://localhost:8080'
 
 export function apiEnabled() {
 	return !!(API_BASE && String(API_BASE).trim())
@@ -108,57 +108,78 @@ export function clearSchoolDetailCache() {
 	// 已取消前端详情缓存；保留空实现以免旧调用报错
 }
 
-/** 刷题：拉题 */
-export function practiceQuestions(query) {
-	return request('/api/practice/questions', query, 15000)
-}
+/** ---------- 刷题 V2 ---------- */
 
-/** 刷题：单题 */
-export function practiceQuestion(id, userKey) {
-	return request('/api/practice/questions/' + id, { userKey }, 12000)
-}
-
-/** 刷题：提交答案 */
-export function practiceSubmit(body) {
-	return post('/api/practice/questions/submit', body, 20000)
-}
-
-/** 刷题：收藏切换 */
-export function practiceFavToggle(body) {
-	return post('/api/practice/favorites/toggle', body, 12000)
-}
-
-/** 刷题：收藏列表 */
-export function practiceFavorites(query) {
-	return request('/api/practice/favorites', query, 12000)
-}
-
-/** 刷题：错题列表 */
-export function practiceWrong(query) {
-	return request('/api/practice/wrong-questions', query, 12000)
-}
-
-/** 刷题：标记掌握 */
-export function practiceMaster(body) {
-	return post('/api/practice/wrong-questions/master', body, 12000)
-}
-
-/** 刷题：总览统计 */
-export function practiceOverview(query) {
-	return request('/api/practice/stats/overview', query, 12000)
-}
-
-/** 刷题：知识点 */
-export function practiceKnowledge(query) {
-	return request('/api/practice/stats/knowledge', query, 12000)
-}
-
-/** 刷题：知识点模块列表 */
-export function practiceModules(query) {
-	return request('/api/practice/modules', query, 12000)
-}
-
-/** 刷题：健康/灌种子 */
 export function practiceHealth() {
 	return request('/api/practice/health', null, 15000)
+}
+
+/** 科目列表（含用户进度） */
+export function practiceSubjects(userKey) {
+	return request('/api/subjects', { userKey }, 15000)
+}
+
+/** 章节列表 */
+export function practiceChapters(query) {
+	return request('/api/chapters', query, 12000)
+}
+
+/** 知识点 */
+export function practiceKnowledgePoints(query) {
+	return request('/api/knowledge-points', query, 12000)
+}
+
+/** 题目列表（分页筛选） */
+export function practiceQuestions(query) {
+	return request('/api/questions', query, 15000)
+}
+
+/** 历年真题年份列表 */
+export function practiceYears() {
+	return request('/api/questions/years', null, 12000)
+}
+
+/** 某年真题 id 列表 */
+export function practiceQuestionsByYear(year) {
+	return request('/api/questions/by-year', { year }, 15000)
+}
+
+/** 单题 */
+export function practiceQuestion(id, userKey) {
+	return request('/api/questions/' + id, { userKey }, 12000)
+}
+
+/** 提交答案 */
+export function practiceSubmit(body) {
+	return post('/api/questions/submit', body, 20000)
+}
+
+/** 收藏切换 */
+export function practiceFavToggle(body) {
+	return post('/api/favorites/toggle', body, 12000)
+}
+
+/** 收藏列表 */
+export function practiceFavorites(query) {
+	return request('/api/favorites', query, 12000)
+}
+
+/** 错题列表（仅未自动移出） */
+export function practiceWrong(query) {
+	return request('/api/wrong-questions', query, 12000)
+}
+
+/** 总览统计 */
+export function practiceOverview(query) {
+	return request('/api/stats/overview', query, 12000)
+}
+
+/** 知识点雷达 */
+export function practiceKnowledge(query) {
+	return request('/api/stats/knowledge', query, 12000)
+}
+
+/** 答题历史 */
+export function practiceHistory(query) {
+	return request('/api/stats/history', query, 12000)
 }

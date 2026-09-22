@@ -94,10 +94,12 @@ public class SchoolDataController {
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) String majorCode
     ) {
-        return store.list("nation_lines.json").stream()
-                .filter(row -> year == null || Objects.equals(asInt(row.get("year")), year))
-                .filter(row -> majorCode == null || containsCode(row.get("majorCodes"), majorCode))
-                .collect(Collectors.toList());
+        return mysql.listNationLines(year, majorCode);
+    }
+
+    @GetMapping("/school-catalog")
+    public List<Map<String, Object>> schoolCatalog(@RequestParam String schoolCode) {
+        return mysql.listCatalogBySchool(schoolCode);
     }
 
     @GetMapping("/programs")
@@ -187,14 +189,6 @@ public class SchoolDataController {
                 nation = mysql.findNationRow(lookupYear, code);
                 if (nation != null) break;
             }
-        }
-        if (nation == null) {
-            final int y = lookupYear;
-            nation = store.list("nation_lines.json").stream()
-                    .filter(row -> Objects.equals(asInt(row.get("year")), y))
-                    .filter(row -> codes.stream().anyMatch(code -> containsCode(row.get("majorCodes"), code)))
-                    .findFirst()
-                    .orElse(null);
         }
         if (yearly.isEmpty() && admission != null) {
             yearly = CohortYears.filterYearRows(List.of(admissionToYear(admission)));

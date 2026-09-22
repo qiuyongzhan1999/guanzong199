@@ -55,7 +55,13 @@
 		{
 			"path": "pages/practice/index",
 			"style": {
-				"navigationBarTitleText": "管综刷题"
+				"navigationBarTitleText": "刷题开练"
+			}
+		},
+		{
+			"path": "pages/practice/chapters",
+			"style": {
+				"navigationBarTitleText": "章节列表"
 			}
 		},
 		{
@@ -80,6 +86,18 @@
 			"path": "pages/practice/stats",
 			"style": {
 				"navigationBarTitleText": "练习统计"
+			}
+		},
+		{
+			"path": "pages/practice/history",
+			"style": {
+				"navigationBarTitleText": "历史记录"
+			}
+		},
+		{
+			"path": "pages/practice/years",
+			"style": {
+				"navigationBarTitleText": "历年真题"
 			}
 		},
 		{

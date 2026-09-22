@@ -79,7 +79,7 @@ page {
 .edu-hero-home {
 	position: relative;
 	overflow: hidden;
-	margin-bottom: 36rpx;
+	margin-bottom: 12rpx;
 	padding: 40rpx 36rpx 28rpx;
 	border-radius: 40rpx;
 	background:
@@ -291,12 +291,50 @@ page {
 	color: $faint;
 }
 
+.edu-section-head {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin: 28rpx 4rpx 18rpx;
+}
+
+.edu-home > .edu-section-head:first-of-type {
+	margin-top: 16rpx;
+}
+
+.edu-section-bar {
+	width: 8rpx;
+	height: 28rpx;
+	margin-right: 14rpx;
+	border-radius: 999rpx;
+	background: $signal;
+	flex-shrink: 0;
+}
+
+.edu-section-bar.tone-heat {
+	background: $heat;
+}
+
+.edu-section-title {
+	font-size: 30rpx;
+	font-weight: 700;
+	letter-spacing: 1rpx;
+	color: $ink;
+}
+
+.edu-section-hint {
+	margin-left: auto;
+	font-size: 22rpx;
+	font-weight: 500;
+	color: $faint;
+}
+
 .edu-home-grid {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	margin-bottom: 12rpx;
+	margin-bottom: 8rpx;
 }
 
 .edu-home-row {
@@ -306,17 +344,83 @@ page {
 }
 
 .edu-tile {
+	position: relative;
+	overflow: hidden;
 	width: 48%;
 	margin-bottom: 20rpx;
-	padding: 28rpx 24rpx 26rpx;
+	padding: 24rpx 22rpx 26rpx;
 	box-sizing: border-box;
 	background: $surface;
 	border-radius: 28rpx;
+	border: 2rpx solid rgba(20, 32, 51, 0.04);
 	box-shadow: $shadow;
 }
 
 .edu-tile:active {
-	opacity: 0.9;
+	opacity: 0.88;
+	transform: scale(0.985);
+}
+
+.edu-tile.tone-signal {
+	background: linear-gradient(155deg, rgba(231, 240, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 58%);
+	border-color: rgba(47, 111, 237, 0.12);
+}
+
+.edu-tile.tone-good {
+	background: linear-gradient(155deg, rgba(231, 246, 242, 0.95) 0%, rgba(255, 255, 255, 0.98) 58%);
+	border-color: rgba(31, 138, 112, 0.12);
+}
+
+.edu-tile.tone-heat {
+	background: linear-gradient(155deg, rgba(253, 236, 234, 0.95) 0%, rgba(255, 255, 255, 0.98) 58%);
+	border-color: rgba(226, 91, 74, 0.12);
+}
+
+.edu-tile.tone-soft {
+	background: $surface;
+	border-color: rgba(20, 32, 51, 0.05);
+}
+
+.edu-tile-top {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 20rpx;
+}
+
+.edu-tile-tag {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	padding: 8rpx 18rpx;
+	border-radius: 999rpx;
+	font-size: 22rpx;
+	font-weight: 700;
+	letter-spacing: 1rpx;
+	line-height: 1.2;
+	background: $wash;
+	color: $signal;
+}
+
+.edu-tile-tag.tone-signal {
+	background: rgba(47, 111, 237, 0.14);
+	color: $signal;
+}
+
+.edu-tile-tag.tone-good {
+	background: rgba(31, 138, 112, 0.14);
+	color: $good;
+}
+
+.edu-tile-tag.tone-heat {
+	background: rgba(226, 91, 74, 0.12);
+	color: $heat;
+}
+
+.edu-tile-drill .edu-tile-sub {
+	margin-top: 10rpx;
 }
 
 .edu-tile-wide {
@@ -324,12 +428,52 @@ page {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	padding: 26rpx 24rpx;
+	padding: 24rpx 22rpx;
+}
+
+.edu-tile.edu-tile-feature {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16rpx;
+	padding: 28rpx 26rpx;
+	background:
+		linear-gradient(125deg, rgba(47, 111, 237, 0.14) 0%, rgba(231, 240, 255, 0.55) 42%, rgba(255, 255, 255, 0.98) 100%);
+	border-color: rgba(47, 111, 237, 0.16);
+	box-shadow: 0 14rpx 36rpx rgba(47, 111, 237, 0.12);
+}
+
+.edu-tile-feature-main {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+}
+
+.edu-tile-feature .edu-tile-mark {
+	margin-right: 20rpx;
+	margin-bottom: 0;
+}
+
+.edu-tile-cta {
+	margin-left: 16rpx;
+	padding: 12rpx 22rpx;
+	border-radius: 999rpx;
+	font-size: 22rpx;
+	font-weight: 700;
+	letter-spacing: 1rpx;
+	color: #fff;
+	background: $signal;
+	box-shadow: 0 8rpx 20rpx rgba(47, 111, 237, 0.28);
+	flex-shrink: 0;
 }
 
 .edu-tile-mark {
 	margin-right: 0;
-	margin-bottom: 18rpx;
+	margin-bottom: 0;
 }
 
 .edu-tile-wide .edu-tile-mark {
@@ -358,6 +502,16 @@ page {
 	font-size: 22rpx;
 	line-height: 1.4;
 	color: $mist;
+}
+
+.edu-home-grid .edu-tile-drill .edu-tile-title {
+	font-size: 32rpx;
+}
+
+.edu-home-grid .edu-go {
+	margin-left: 0;
+	font-size: 32rpx;
+	color: rgba(138, 151, 168, 0.7);
 }
 
 .edu-card {
@@ -1098,6 +1252,37 @@ page {
 
 .edu-practice-hero .edu-card-title {
 	margin-bottom: 8rpx;
+	font-size: 40rpx;
+	font-weight: 700;
+}
+
+.edu-section-head-in {
+	margin: 0 0 22rpx;
+}
+
+.edu-section-head-in .edu-section-title {
+	font-size: 34rpx;
+}
+
+.edu-practice-tools {
+	margin-top: 28rpx;
+	padding-top: 8rpx;
+	padding-bottom: 12rpx;
+}
+
+.edu-practice-tool-copy {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.edu-practice-tool-copy .edu-muted {
+	display: block;
+	margin-top: 6rpx;
+	font-size: 22rpx;
+	line-height: 1.4;
+	color: $mist;
 }
 
 .edu-practice-links {
@@ -1105,8 +1290,7 @@ page {
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 16rpx;
-	margin-top: 24rpx;
-	justify-content: center;
+	margin-top: 20rpx;
 }
 
 .edu-practice-quiz-top {
@@ -1144,6 +1328,12 @@ page {
 	border-radius: 24rpx;
 	background: $canvas;
 	border: 2rpx solid transparent;
+	transition: transform 0.18s ease;
+}
+
+.edu-practice-option:active,
+.edu-practice-option.bounce {
+	transform: scale(0.97);
 }
 
 .edu-practice-option.on {
@@ -1163,9 +1353,231 @@ page {
 
 .edu-practice-nav {
 	display: flex;
-	flex-direction: column;
-	gap: 8rpx;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 16rpx;
 	margin-top: 8rpx;
+}
+
+.edu-practice-nav .edu-btn {
+	flex: 1;
+	min-width: 40%;
+}
+
+.edu-btn:active {
+	transform: scale(0.98);
+}
+
+/* 科目大卡 */
+.edu-subject-card {
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 20rpx;
+	padding: 32rpx 28rpx 28rpx;
+	border-radius: 32rpx;
+	border: 2rpx solid rgba(47, 111, 237, 0.14);
+	background: linear-gradient(135deg, rgba(47, 111, 237, 0.92), rgba(91, 141, 239, 0.88));
+	box-shadow: 0 16rpx 40rpx rgba(47, 111, 237, 0.22);
+}
+
+.edu-subject-card.tone-heat {
+	border-color: rgba(226, 91, 74, 0.18);
+	background: linear-gradient(135deg, rgba(226, 91, 74, 0.94), rgba(240, 138, 90, 0.88));
+	box-shadow: 0 16rpx 40rpx rgba(226, 91, 74, 0.2);
+}
+
+.edu-subject-card.tone-good {
+	border-color: rgba(31, 138, 112, 0.18);
+	background: linear-gradient(135deg, rgba(31, 138, 112, 0.94), rgba(42, 168, 160, 0.88));
+	box-shadow: 0 16rpx 40rpx rgba(31, 138, 112, 0.2);
+}
+
+.edu-subject-card:active {
+	transform: scale(0.985);
+	opacity: 0.94;
+}
+
+.edu-subject-card-glow {
+	position: absolute;
+	right: -40rpx;
+	top: -60rpx;
+	width: 220rpx;
+	height: 220rpx;
+	border-radius: 999rpx;
+	background: rgba(255, 255, 255, 0.18);
+	pointer-events: none;
+}
+
+.edu-subject-card-top {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.edu-subject-card-name {
+	font-size: 36rpx;
+	font-weight: 800;
+	color: #fff;
+	letter-spacing: 1rpx;
+}
+
+.edu-subject-card .edu-go.tone-on {
+	color: rgba(255, 255, 255, 0.85);
+	font-size: 40rpx;
+}
+
+.edu-subject-card-sub {
+	position: relative;
+	z-index: 1;
+	display: block;
+	margin-top: 14rpx;
+	margin-bottom: 20rpx;
+	font-size: 22rpx;
+	color: rgba(255, 255, 255, 0.88);
+}
+
+.edu-hp-bar {
+	height: 16rpx;
+	border-radius: 999rpx;
+	background: rgba(20, 32, 51, 0.08);
+	overflow: hidden;
+}
+
+.edu-subject-card .edu-hp-bar {
+	background: rgba(255, 255, 255, 0.28);
+}
+
+.edu-hp-bar-lg {
+	height: 20rpx;
+	margin-top: 16rpx;
+}
+
+.edu-hp-fill {
+	height: 100%;
+	border-radius: 999rpx;
+	background: linear-gradient(90deg, $signal, #5B8DEF);
+	transition: width 0.35s ease;
+}
+
+.edu-hp-fill.tone-good {
+	background: linear-gradient(90deg, $good, #2AA8A0);
+}
+
+.edu-hp-fill.tone-heat {
+	background: linear-gradient(90deg, $heat, #F08A5A);
+}
+
+.edu-hp-fill.is-empty {
+	width: 0 !important;
+}
+
+.edu-subject-card .edu-hp-fill {
+	background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.75));
+}
+
+.edu-chapter-row {
+	padding-bottom: 24rpx;
+}
+
+.edu-chapter-head {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-bottom: 14rpx;
+}
+
+.edu-chapter-row .edu-hp-bar {
+	margin-bottom: 10rpx;
+}
+
+.edu-chapter-row:active {
+	transform: scale(0.99);
+	opacity: 0.92;
+}
+
+.edu-quiz-top-right {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 16rpx;
+}
+
+.tone-good-text {
+	color: $good;
+	font-weight: 700;
+}
+
+.tone-heat-text {
+	color: $heat;
+	font-weight: 700;
+}
+
+.edu-confetti {
+	pointer-events: none;
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 20%;
+	height: 240rpx;
+	z-index: 20;
+	overflow: hidden;
+}
+
+.edu-confetti-piece {
+	position: absolute;
+	top: 0;
+	width: 12rpx;
+	height: 28rpx;
+	border-radius: 4rpx;
+	animation: edu-fall 0.9s ease-out forwards;
+}
+
+.edu-confetti-piece.c0 { background: $signal; left: 18%; }
+.edu-confetti-piece.c1 { background: $good; left: 42%; }
+.edu-confetti-piece.c2 { background: $heat; left: 68%; }
+.edu-confetti-piece:nth-child(4) { left: 28%; background: $signal; }
+.edu-confetti-piece:nth-child(5) { left: 55%; background: $good; }
+.edu-confetti-piece:nth-child(6) { left: 78%; background: $heat; }
+.edu-confetti-piece:nth-child(7) { left: 12%; background: $good; }
+.edu-confetti-piece:nth-child(8) { left: 88%; background: $signal; }
+.edu-confetti-piece:nth-child(9) { left: 35%; background: $heat; }
+.edu-confetti-piece:nth-child(10) { left: 62%; background: $signal; }
+.edu-confetti-piece:nth-child(11) { left: 48%; background: $good; }
+.edu-confetti-piece:nth-child(12) { left: 72%; background: $heat; }
+
+@keyframes edu-fall {
+	0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+	100% { transform: translateY(220rpx) rotate(180deg); opacity: 0; }
+}
+
+.edu-wrong-stack {
+	min-height: 420rpx;
+}
+
+.edu-wrong-card {
+	min-height: 360rpx;
+}
+
+.edu-radar-wrap {
+	display: flex;
+	justify-content: center;
+	margin: 8rpx 0 20rpx;
+}
+
+.edu-radar-canvas {
+	width: 280px;
+	height: 280px;
+}
+
+.edu-trend-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 16rpx;
 }
 
 .edu-match-block.fold .edu-essay-alert,

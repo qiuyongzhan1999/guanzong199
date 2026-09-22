@@ -123,14 +123,6 @@ python server/scripts/import_to_mysql.py
 | programs / admissions | **跳过空壳**（无来源或无实质字段） |
 | ai_packs | **跳过全 null 空壳包** |
 
-联网拉最新国家线（需 DeepSeek Key）：
+招录学费等逐校数据：以库内已有字段为准；详情接口读 MySQL（`source: mysql`），不再走联网搜索补数。
 
-```powershell
-$env:DEEPSEEK_API_KEY = "sk-..."
-$env:DB_PASSWORD = "你的密码"
-python server/scripts/refresh_nation_lines.py
-```
-
-招录学费等逐校数据：打开院校详情会后台 `enrich=true` 联网搜索，写回 `school_data_packs` / `school_year_stats`。全量 2000+ 组合不适合一次跑完。
-
-接口读路径：`schools` 表有数据后，`/api/school-detail` 优先 MySQL（响应里 `source: mysql`）。
+接口读路径：`schools` 表有数据后，`/api/school-detail` 优先 MySQL。

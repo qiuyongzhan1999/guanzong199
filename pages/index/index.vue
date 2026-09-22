@@ -13,7 +13,6 @@
 				<text class="edu-hero-brand-name">管综</text>
 				<view class="edu-hero-score-wrap">
 					<text class="edu-hero-num">199</text>
-					<text class="edu-hero-score-unit">分</text>
 				</view>
 			</view>
 			<text class="edu-hero-tag">择校有数，上岸有路</text>
@@ -31,40 +30,69 @@
 			</view>
 		</view>
 
-		<text class="edu-section-label">刷题开练</text>
+		<view class="edu-section-head">
+			<view class="edu-section-bar" />
+			<text class="edu-section-title">刷题开练</text>
+			<text class="edu-section-hint">每天一套</text>
+		</view>
 		<view class="edu-home-grid">
 			<view
-				class="edu-tile"
+				class="edu-tile edu-tile-drill"
 				v-for="item in drills"
 				:key="item.title"
+				:class="'tone-' + item.tone"
 				@tap="open(item)"
 			>
-				<text class="edu-mark edu-tile-mark" :class="'tone-' + item.tone">{{ item.mark }}</text>
+				<view class="edu-tile-top">
+					<view class="edu-tile-tag" :class="'tone-' + item.tone">
+						<text>{{ item.tag }}</text>
+					</view>
+					<text class="edu-go">›</text>
+				</view>
 				<text class="edu-tile-title">{{ item.title }}</text>
 				<text class="edu-tile-sub">{{ item.sub }}</text>
 			</view>
 		</view>
 
-		<text class="edu-section-label">择校找校</text>
-		<view class="edu-home-grid">
-			<view
-				class="edu-tile"
-				v-for="item in schools"
-				:key="item.title"
-				@tap="open(item)"
-			>
-				<text class="edu-mark edu-tile-mark" :class="'tone-' + item.tone">{{ item.mark }}</text>
-				<text class="edu-tile-title">{{ item.title }}</text>
-				<text class="edu-tile-sub">{{ item.sub }}</text>
+		<view class="edu-section-head">
+			<view class="edu-section-bar" />
+			<text class="edu-section-title">择校找校</text>
+			<text class="edu-section-hint">先看稳冲难</text>
+		</view>
+		<view
+			class="edu-tile edu-tile-feature tone-signal"
+			@tap="open(schools[0])"
+		>
+			<view class="edu-tile-feature-main">
+				<text class="edu-mark edu-tile-mark tone-signal">{{ schools[0].mark }}</text>
+				<view class="edu-tile-copy">
+					<text class="edu-tile-title">{{ schools[0].title }}</text>
+					<text class="edu-tile-sub">{{ schools[0].sub }}</text>
+				</view>
 			</view>
 		</view>
+		<view
+			class="edu-tile edu-tile-wide tone-soft"
+			@tap="open(schools[1])"
+		>
+			<text class="edu-mark edu-tile-mark tone-signal">{{ schools[1].mark }}</text>
+			<view class="edu-tile-copy">
+				<text class="edu-tile-title">{{ schools[1].title }}</text>
+				<text class="edu-tile-sub">{{ schools[1].sub }}</text>
+			</view>
+			<text class="edu-go">›</text>
+		</view>
 
-		<text class="edu-section-label">作文批改</text>
+		<view class="edu-section-head">
+			<view class="edu-section-bar tone-heat" />
+			<text class="edu-section-title">作文批改</text>
+		</view>
 		<view class="edu-home-row">
 			<view
 				class="edu-tile edu-tile-wide"
 				v-for="item in essays"
 				:key="item.title"
+				:class="'tone-' + item.tone"
 				@tap="open(item)"
 			>
 				<text class="edu-mark edu-tile-mark" :class="'tone-' + item.tone">{{ item.mark }}</text>
@@ -88,8 +116,8 @@
 					{ label: '写作', value: '65', tone: 'heat' }
 				],
 				drills: [
-					{ mark: '数', title: '管综刷题', sub: '数学 · 逻辑', url: '/pages/practice/index?subject=guanzong', tone: 'signal' },
-					{ mark: '英', title: '英语二刷题', sub: '词汇 · 完形 · 阅读', url: '/pages/practice/index?subject=english', tone: 'good' }
+					{ tag: '刷题', title: '去刷题', sub: '数学 · 逻辑 · 英语二', url: '/pages/practice/index', tone: 'signal' },
+					{ tag: '错题', title: '错题本', sub: '连对 2 次自动移出', url: '/pages/practice/wrong', tone: 'heat' }
 				],
 				schools: [
 					{ mark: '择', title: '智能择校', sub: '稳冲难一眼看清', url: '/pages/intent/index', tone: 'signal' },

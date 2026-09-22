@@ -14,7 +14,7 @@ Write-Host ""
 Write-Host "======== gz199 backend restart ========" -ForegroundColor Cyan
 Write-Host ("dir: " + $server)
 
-$jdk = "D:\java\jdk-17"
+$jdk = "E:\workTool\java\jdk-17"
 $javaExe = Join-Path $jdk "bin\java.exe"
 if (-not (Test-Path $javaExe)) {
     Write-Host ("JDK 17 not found: " + $jdk) -ForegroundColor Red

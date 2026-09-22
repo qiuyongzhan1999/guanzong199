@@ -9,13 +9,6 @@ gz199:
     vision-model: deepseek-flash
     timeout-seconds: 120
     max-output-tokens: 8192
-  kimi:
-    enabled: false
-    base-url: https://api.moonshot.cn/v1
-    api-key: ${MOONSHOT_API_KEY:${KIMI_API_KEY:}}
-    model: kimi-k3
-    timeout-seconds: 90
-    max-output-tokens: 2048
 
 server:
   port: 8080

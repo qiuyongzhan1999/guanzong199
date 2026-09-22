@@ -121,6 +121,16 @@ public class PracticeService {
         return out;
     }
 
+    public Map<String, Object> modules(String subject, String type) {
+        Map<String, Object> gate = ensureSeeded();
+        if (Boolean.FALSE.equals(gate.get("ok"))) return gate;
+        List<String> items = repo.listModules(blankToNull(subject), blankToNull(type));
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("ok", true);
+        out.put("items", items);
+        return out;
+    }
+
     public Map<String, Object> getQuestion(long id, String userKey) {
         Map<String, Object> gate = ensureSeeded();
         if (Boolean.FALSE.equals(gate.get("ok"))) return gate;

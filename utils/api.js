@@ -153,6 +153,11 @@ export function practiceKnowledge(query) {
 	return request('/api/practice/stats/knowledge', query, 12000)
 }
 
+/** 刷题：知识点模块列表 */
+export function practiceModules(query) {
+	return request('/api/practice/modules', query, 12000)
+}
+
 /** 刷题：健康/灌种子 */
 export function practiceHealth() {
 	return request('/api/practice/health', null, 15000)

@@ -122,6 +122,27 @@ public class PracticeRepository {
         else ps.setInt(11, toInt(year, 0));
     }
 
+    public List<String> listModules(String subject, String type) {
+        StringBuilder sql = new StringBuilder(
+                """
+                SELECT DISTINCT knowledge_point
+                FROM questions
+                WHERE status=1 AND knowledge_point IS NOT NULL AND knowledge_point<>''
+                """
+        );
+        List<Object> args = new ArrayList<>();
+        if (subject != null && !subject.isBlank()) {
+            sql.append(" AND subject=?");
+            args.add(subject);
+        }
+        if (type != null && !type.isBlank()) {
+            sql.append(" AND type=?");
+            args.add(type);
+        }
+        sql.append(" ORDER BY knowledge_point ASC");
+        return jdbc.queryForList(sql.toString(), String.class, args.toArray());
+    }
+
     public List<Map<String, Object>> listQuestions(String subject, String type, String kp, String mode, int limit) {
         StringBuilder sql = new StringBuilder(
                 """

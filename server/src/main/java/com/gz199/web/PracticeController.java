@@ -41,6 +41,14 @@ public class PracticeController {
         return practice.listQuestions(subject, type, knowledgePoint, mode, limit);
     }
 
+    @GetMapping("/modules")
+    public Map<String, Object> modules(
+            @RequestParam(required = false) String subject,
+            @RequestParam(required = false) String type
+    ) {
+        return practice.modules(subject, type);
+    }
+
     @GetMapping("/questions/{id}")
     public Map<String, Object> one(
             @PathVariable long id,

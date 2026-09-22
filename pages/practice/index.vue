@@ -3,7 +3,7 @@
 		<view class="edu-card edu-practice-hero">
 			<text class="edu-kicker">{{ subject === 'english' ? '英语二刷题' : '管综刷题' }}</text>
 			<text class="edu-card-title">{{ subject === 'english' ? '词汇 · 完形 · 阅读' : '数学 · 逻辑' }}</text>
-			<text class="edu-hint">错题会自动进错题本，可随时收藏重做。</text>
+			<text class="edu-hint">按题型与知识点筛选后开练，错题会进错题本。</text>
 			<StatRow :columns="3" :items="statItems" />
 		</view>
 
@@ -15,22 +15,23 @@
 					v-for="t in types"
 					:key="t.id"
 					:class="{ on: type === t.id }"
-					@tap="type = t.id"
+					@tap="onType(t.id)"
 				>{{ t.label }}</view>
 			</view>
 		</view>
 
 		<view class="edu-card">
-			<text class="edu-card-title">模式</text>
-			<view class="edu-chips">
+			<text class="edu-card-title">知识点</text>
+			<view class="edu-chips" v-if="moduleChips.length">
 				<view
 					class="edu-chip"
-					v-for="m in modes"
+					v-for="m in moduleChips"
 					:key="m.id"
-					:class="{ on: mode === m.id }"
-					@tap="mode = m.id"
+					:class="{ on: knowledgePoint === m.id }"
+					@tap="knowledgePoint = m.id"
 				>{{ m.label }}</view>
 			</view>
+			<text class="edu-hint" v-else>加载知识点中…</text>
 		</view>
 
 		<view class="edu-btn" :class="{ off: loading }" @tap="start">
@@ -47,7 +48,7 @@
 
 <script>
 	import StatRow from '../../components/ui/StatRow.vue'
-	import { practiceHealth, practiceOverview, practiceQuestions } from '../../utils/api.js'
+	import { practiceHealth, practiceModules, practiceOverview, practiceQuestions } from '../../utils/api.js'
 	import { getPracticeUserKey } from '../../utils/practice-user.js'
 
 	const TYPES = {
@@ -70,12 +71,9 @@
 			return {
 				subject: 'guanzong',
 				type: '',
-				mode: 'order',
-				modes: [
-					{ id: 'order', label: '顺序' },
-					{ id: 'random', label: '随机' }
-				],
-				stats: { today: 0, wrongOpen: 0, accuracy: 0, questionCount: 0 },
+				knowledgePoint: '',
+				modules: [],
+				stats: { today: 0, wrongOpen: 0, accuracy: 0 },
 				loading: false
 			}
 		},
@@ -83,10 +81,17 @@
 			types() {
 				return TYPES[this.subject] || TYPES.guanzong
 			},
+			moduleChips() {
+				const list = [{ id: '', label: '全部' }]
+				;(this.modules || []).forEach((name) => {
+					if (name) list.push({ id: name, label: name })
+				})
+				return list
+			},
 			statItems() {
 				return [
-					{ label: '题库', value: String(this.stats.questionCount || 0) },
 					{ label: '今日', value: String(this.stats.today || 0) },
+					{ label: '错题', value: String(this.stats.wrongOpen || 0) },
 					{ label: '正确率', value: (this.stats.accuracy || 0) + '%' }
 				]
 			}
@@ -94,11 +99,32 @@
 		onLoad(q) {
 			if (q && q.subject) this.subject = q.subject === 'english' ? 'english' : 'guanzong'
 			this.type = ''
+			this.knowledgePoint = ''
 		},
 		onShow() {
 			this.loadStats()
+			this.loadModules()
 		},
 		methods: {
+			onType(id) {
+				this.type = id
+				this.knowledgePoint = ''
+				this.loadModules()
+			},
+			async loadModules() {
+				try {
+					const data = await practiceModules({
+						subject: this.subject,
+						type: this.type || undefined
+					})
+					this.modules = (data && data.items) || []
+					if (this.knowledgePoint && this.modules.indexOf(this.knowledgePoint) < 0) {
+						this.knowledgePoint = ''
+					}
+				} catch (e) {
+					this.modules = []
+				}
+			},
 			async loadStats() {
 				try {
 					await practiceHealth()
@@ -107,9 +133,7 @@
 						subject: this.subject
 					})
 					if (data && data.ok) {
-						this.stats = Object.assign({}, data.stats || {}, {
-							questionCount: data.questionCount || 0
-						})
+						this.stats = Object.assign({}, data.stats || {})
 					}
 				} catch (e) {
 					/* ignore */
@@ -125,7 +149,8 @@
 					const data = await practiceQuestions({
 						subject: this.subject,
 						type: this.type || undefined,
-						mode: this.mode,
+						knowledgePoint: this.knowledgePoint || undefined,
+						mode: 'random',
 						limit: 20
 					})
 					if (!data || data.ok === false) {
@@ -134,13 +159,14 @@
 					}
 					const items = data.items || []
 					if (!items.length) {
-						uni.showToast({ title: '暂无题目', icon: 'none' })
+						uni.showToast({ title: '该模块暂无题目', icon: 'none' })
 						return
 					}
 					uni.setStorageSync('practiceSession', {
 						subject: this.subject,
 						type: this.type,
-						mode: this.mode,
+						knowledgePoint: this.knowledgePoint,
+						mode: 'random',
 						ids: items.map((q) => q.id),
 						index: 0
 					})

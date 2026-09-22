@@ -79,9 +79,6 @@
 </template>
 
 <script>
-	import { practiceOverview } from '../../utils/api.js'
-	import { getPracticeUserKey } from '../../utils/practice-user.js'
-
 	export default {
 		data() {
 			return {
@@ -91,8 +88,8 @@
 					{ label: '写作', value: '65', tone: 'heat' }
 				],
 				drills: [
-					{ mark: '数', title: '管综刷题', sub: '数学 · 逻辑 · 3000题', url: '/pages/practice/index?subject=guanzong', tone: 'signal', live: true },
-					{ mark: '英', title: '英语二刷题', sub: '词汇 · 完形 · 阅读 · 2000题', url: '/pages/practice/index?subject=english', tone: 'good', live: true }
+					{ mark: '数', title: '管综刷题', sub: '数学 · 逻辑', url: '/pages/practice/index?subject=guanzong', tone: 'signal' },
+					{ mark: '英', title: '英语二刷题', sub: '词汇 · 完形 · 阅读', url: '/pages/practice/index?subject=english', tone: 'good' }
 				],
 				schools: [
 					{ mark: '择', title: '智能择校', sub: '稳冲难一眼看清', url: '/pages/intent/index', tone: 'signal' },
@@ -103,9 +100,6 @@
 					{ mark: '人', title: '人工批改', sub: '加微信，老师一对一盯卷', url: '/pages/ai-essay/human', tone: 'good' }
 				]
 			}
-		},
-		onShow() {
-			this.loadPracticeHint()
 		},
 		methods: {
 			open(item) {
@@ -118,25 +112,6 @@
 					return
 				}
 				uni.showToast({ title: '还没开放', icon: 'none' })
-			},
-			async loadPracticeHint() {
-				try {
-					const data = await practiceOverview({
-						userKey: getPracticeUserKey(),
-						subject: 'guanzong'
-					})
-					if (!data || !data.ok) return
-					const s = data.stats || {}
-					const bits = []
-					if (data.questionCount) bits.push('题库 ' + data.questionCount)
-					if (s.wrongOpen) bits.push('错题 ' + s.wrongOpen)
-					if (s.accuracy != null && s.answered) bits.push('正确率 ' + s.accuracy + '%')
-					if (!bits.length) return
-					const d = this.drills.find((x) => x.live)
-					if (d) d.sub = bits.join(' · ')
-				} catch (e) {
-					/* ignore */
-				}
 			}
 		}
 	}

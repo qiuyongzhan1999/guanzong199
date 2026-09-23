@@ -164,12 +164,12 @@ public class EssayGradeService {
 
                     字数约：%d（仅统计粘贴文字；纯图片批改时可为 0）
 
-                    要求：短评、少废话；strengths 可空；problems≤3。只输出 JSON：
+                    要求：按官方 30 分制先定档再给分；内容块（缺陷识别+分析深度）合计≤16；结构+语言合计≤14且须落在一类12-14/二类8-11/三类4-7/四类0-3；四维分数之和=score；短评、少废话；strengths 可空；problems≤3。只输出 JSON：
                     {
                       "score": 0,
                       "level": "一类/二类/三类/四类",
-                      "summary": "≤40字总评",
-                      "score_deduction": [{"item": "", "points": -1, "reason": "≤20字"}],
+                      "summary": "≤40字总评（点明内容/表达哪块拖分）",
+                      "score_deduction": [{"item": "内容/结构/语言", "points": -1, "reason": "≤20字"}],
                       "dimensions": {
                         "缺陷识别": {"score": 0, "comment": "≤30字"},
                         "分析深度": {"score": 0, "comment": "≤30字"},
@@ -209,12 +209,12 @@ public class EssayGradeService {
 
                     字数：%d
 
-                    要求：短评、少废话；strengths 可空；problems≤3。只输出 JSON：
+                    要求：按官方 35 分制先定档再给分（一类30-35/二类24-29/三类18-23/四类11-17/五类0-10）；立意+结构+论证+语言之和=score；漏拟题目-2、错字每3个-1最多-2、标点/卷面酌情-1～-2须写入 score_deduction；偏题不得因文笔抬档；短评、少废话；strengths 可空；problems≤3。只输出 JSON：
                     {
                       "score": 0,
-                      "level": "一类/二类/三类/四类",
-                      "summary": "≤40字总评",
-                      "score_deduction": [{"item": "", "points": -1, "reason": "≤20字"}],
+                      "level": "一类/二类/三类/四类/五类",
+                      "summary": "≤40字总评（点明档位与主因）",
+                      "score_deduction": [{"item": "漏拟题目/错别字/标点或卷面/立意或论证等", "points": -1, "reason": "≤20字"}],
                       "thesis_check": {"student_thesis": "", "is_on_topic": true, "comment": "≤30字"},
                       "dimensions": {
                         "立意": {"score": 0, "comment": "≤30字"},

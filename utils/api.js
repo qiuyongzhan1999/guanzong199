@@ -62,6 +62,20 @@ function post(path, data, timeout) {
 	})
 }
 
+/** 乐学喵院校列表（MySQL 数据源） */
+export function fetchSchools(query) {
+	const params = {
+		majorCode: (query && query.majorCode) || '125300',
+		studyMode: (query && query.studyMode) || 'fulltime',
+		province: (query && query.province) || '',
+		keyword: (query && query.keyword) || '',
+		trait: (query && query.trait) || 'all',
+		page: (query && query.page) || 1,
+		pageSize: (query && query.pageSize) || 20
+	}
+	return request('/api/schools', params, 15000)
+}
+
 /** 详情只读库，不再等联网补数 */
 export function fetchSchoolDetail(params) {
 	const pkey = packKey(params || {})
@@ -108,78 +122,3 @@ export function clearSchoolDetailCache() {
 	// 已取消前端详情缓存；保留空实现以免旧调用报错
 }
 
-/** ---------- 刷题 V2 ---------- */
-
-export function practiceHealth() {
-	return request('/api/practice/health', null, 15000)
-}
-
-/** 科目列表（含用户进度） */
-export function practiceSubjects(userKey) {
-	return request('/api/subjects', { userKey }, 15000)
-}
-
-/** 章节列表 */
-export function practiceChapters(query) {
-	return request('/api/chapters', query, 12000)
-}
-
-/** 知识点 */
-export function practiceKnowledgePoints(query) {
-	return request('/api/knowledge-points', query, 12000)
-}
-
-/** 题目列表（分页筛选） */
-export function practiceQuestions(query) {
-	return request('/api/questions', query, 15000)
-}
-
-/** 历年真题年份列表 */
-export function practiceYears() {
-	return request('/api/questions/years', null, 12000)
-}
-
-/** 某年真题 id 列表 */
-export function practiceQuestionsByYear(year) {
-	return request('/api/questions/by-year', { year }, 15000)
-}
-
-/** 单题 */
-export function practiceQuestion(id, userKey) {
-	return request('/api/questions/' + id, { userKey }, 12000)
-}
-
-/** 提交答案 */
-export function practiceSubmit(body) {
-	return post('/api/questions/submit', body, 20000)
-}
-
-/** 收藏切换 */
-export function practiceFavToggle(body) {
-	return post('/api/favorites/toggle', body, 12000)
-}
-
-/** 收藏列表 */
-export function practiceFavorites(query) {
-	return request('/api/favorites', query, 12000)
-}
-
-/** 错题列表（仅未自动移出） */
-export function practiceWrong(query) {
-	return request('/api/wrong-questions', query, 12000)
-}
-
-/** 总览统计 */
-export function practiceOverview(query) {
-	return request('/api/stats/overview', query, 12000)
-}
-
-/** 知识点雷达 */
-export function practiceKnowledge(query) {
-	return request('/api/stats/knowledge', query, 12000)
-}
-
-/** 答题历史 */
-export function practiceHistory(query) {
-	return request('/api/stats/history', query, 12000)
-}

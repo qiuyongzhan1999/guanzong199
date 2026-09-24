@@ -21,10 +21,10 @@
 		data() {
 			return {
 				rows: [
+					{ title: '背单词', url: '/pages/words/learn' },
+					{ title: '组队打卡', url: '/pages/words/team' },
 					{ title: '智能择校', url: '/pages/intent/index' },
-					{ title: '刷题开练', url: '/pages/practice/index' },
 					{ title: 'AI 批改', url: '/pages/ai-essay/index' },
-					{ title: '练习记录', url: '/pages/practice/history' },
 					{ title: '批改记录' },
 					{ title: '加老师微信', url: '/pages/ai-essay/human' },
 					{ title: '反馈' },

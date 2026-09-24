@@ -53,57 +53,21 @@
 			}
 		},
 		{
-			"path": "pages/practice/index",
-			"style": {
-				"navigationBarTitleText": "刷题开练"
-			}
-		},
-		{
-			"path": "pages/practice/chapters",
-			"style": {
-				"navigationBarTitleText": "章节列表"
-			}
-		},
-		{
-			"path": "pages/practice/quiz",
-			"style": {
-				"navigationBarTitleText": "答题"
-			}
-		},
-		{
-			"path": "pages/practice/favorites",
-			"style": {
-				"navigationBarTitleText": "收藏夹"
-			}
-		},
-		{
-			"path": "pages/practice/wrong",
-			"style": {
-				"navigationBarTitleText": "错题本"
-			}
-		},
-		{
-			"path": "pages/practice/stats",
-			"style": {
-				"navigationBarTitleText": "练习统计"
-			}
-		},
-		{
-			"path": "pages/practice/history",
-			"style": {
-				"navigationBarTitleText": "历史记录"
-			}
-		},
-		{
-			"path": "pages/practice/years",
-			"style": {
-				"navigationBarTitleText": "历年真题"
-			}
-		},
-		{
 			"path": "pages/mine/index",
 			"style": {
 				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/words/learn",
+			"style": {
+				"navigationBarTitleText": "背单词"
+			}
+		},
+		{
+			"path": "pages/words/team",
+			"style": {
+				"navigationBarTitleText": "组队打卡"
 			}
 		}
 	],

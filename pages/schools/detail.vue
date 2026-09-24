@@ -1,7 +1,10 @@
 <template>
 	<view class="edu-page" v-if="school">
-		<!-- 头部：保持现有蓝卡 -->
+		<!-- 头部：校名主视觉 + 专业焦点 -->
 		<view class="edu-scoreboard">
+			<view class="edu-scoreboard-orb edu-scoreboard-orb-a" />
+			<view class="edu-scoreboard-orb edu-scoreboard-orb-b" />
+			<view class="edu-scoreboard-glow" />
 			<view class="edu-scoreboard-top">
 				<image
 					v-if="school.logo && !logoFailed"
@@ -19,14 +22,41 @@
 					</view>
 				</view>
 			</view>
-			<view class="edu-spotlight">
-				<view class="edu-spotlight-main">
-					<text class="edu-spotlight-label">{{ spotlight.label }}</text>
-					<text class="edu-spotlight-num">{{ spotlight.value }}</text>
+
+			<view class="edu-scoreboard-focus" v-if="majorOptions.length">
+				<picker
+					v-if="majorOptions.length > 1"
+					mode="selector"
+					:range="majorOptions"
+					range-key="name"
+					:value="majorIndex"
+					@change="onMajorPick"
+				>
+					<view class="edu-scoreboard-major">
+						<text class="edu-scoreboard-major-v">{{ majorLabel }}</text>
+						<text class="edu-scoreboard-major-hint">换专业 ▾</text>
+					</view>
+				</picker>
+				<view v-else class="edu-scoreboard-major">
+					<text class="edu-scoreboard-major-v">{{ majorLabel }}</text>
 				</view>
-				<view class="edu-spotlight-side">
-					<text class="edu-spotlight-side-k">{{ spotlightSide }}</text>
-					<text class="edu-spotlight-side-v">{{ majorLabel }}</text>
+
+				<view class="edu-scoreboard-facts">
+					<picker
+						v-if="modeOptions.length > 1"
+						mode="selector"
+						:range="modeOptions"
+						range-key="label"
+						:value="modeIndex"
+						@change="onModePick"
+					>
+						<text class="edu-scoreboard-fact on">{{ modeLabel }} ▾</text>
+					</picker>
+					<text v-else class="edu-scoreboard-fact">{{ modeLabel }}</text>
+					<text class="edu-scoreboard-dot">·</text>
+					<text class="edu-scoreboard-fact">{{ feeInfo.duration }}</text>
+					<text class="edu-scoreboard-dot">·</text>
+					<text class="edu-scoreboard-fact">{{ feeInfo.tuition }}</text>
 				</view>
 			</view>
 		</view>
@@ -42,24 +72,10 @@
 
 		<view class="edu-card" v-if="!majorOptions.length">
 			<text class="edu-card-title">管综专业</text>
-			<text class="edu-muted">2026年硕士专业目录里，这所学校没有管综专业。</text>
+			<text class="edu-muted">乐学喵数据里，这所学校在当前学习形式下没有管综专业。</text>
 		</view>
 
 		<block v-else>
-			<!-- 专业方向分段 -->
-			<view class="edu-card edu-card-tight">
-				<text class="edu-filter-label">专业方向</text>
-				<view class="edu-chips edu-chips-wrap">
-					<view
-						class="edu-chip"
-						v-for="item in majorOptions"
-						:key="'m-' + item.code"
-						:class="{ on: majorCode === item.code }"
-						@tap="pickMajor(item.code)"
-					>{{ item.name }}</view>
-				</view>
-			</view>
-
 			<!-- 核心数据看板 2 列 -->
 			<view class="edu-dash" v-if="dashReady">
 				<view class="edu-dash-cell">
@@ -80,10 +96,6 @@
 					<text class="edu-dash-k">进复试 / 录取</text>
 					<text class="edu-dash-v edu-dash-v-sm">{{ dash.retest }} / {{ dash.enroll }}</text>
 				</view>
-				<view class="edu-dash-cell edu-dash-span">
-					<text class="edu-dash-k">学制 / 学费</text>
-					<text class="edu-dash-v edu-dash-v-sm">{{ dash.duration }} · {{ dash.tuition }}</text>
-				</view>
 			</view>
 			<view class="edu-dash-empty" v-else>
 				<text>{{ syncing ? '正在读取招录数据…' : ('暂无 ' + targetCohort + ' 招录数据。') }}</text>
@@ -92,7 +104,7 @@
 			<!-- 折线：复试线 vs 录取最低 -->
 			<view class="edu-card">
 				<view class="edu-card-head">
-					<text class="edu-card-title">近5年分数线</text>
+					<text class="edu-card-title">近3年分数线</text>
 				</view>
 				<TrendCharts v-if="hasTrend" :trend="yearlyTrend" mode="line" />
 				<view class="edu-chart-empty" v-else>
@@ -100,10 +112,10 @@
 				</view>
 			</view>
 
-			<!-- 近5年明细表 -->
+			<!-- 近3年明细表 -->
 			<view class="edu-card">
 				<view class="edu-card-head">
-					<text class="edu-card-title">近5年详细数据</text>
+					<text class="edu-card-title">近3年详细数据</text>
 				</view>
 				<scroll-view scroll-x class="edu-table-scroll" :show-scrollbar="false">
 					<view class="edu-table-wide">
@@ -159,7 +171,6 @@
 		defaultStudyMode,
 		findProgram,
 		findAdmission,
-		findNationLine,
 		formatScore,
 		admitRate,
 		majorByCode
@@ -191,6 +202,7 @@
 				majorInfo: null,
 				packLoadedKey: '',
 				useRemote: false,
+				remoteMajors: null,
 				loadSeq: 0,
 				syncing: false,
 				syncError: '',
@@ -200,13 +212,12 @@
 		computed: {
 			meta() {
 				if (!this.school) return ''
-				const parts = []
-				if (this.school.province) parts.push(this.school.province)
-				if (this.school.authority) parts.push(this.school.authority)
-				return parts.join(' · ')
+				return this.school.authority || ''
 			},
 			majorOptions() {
 				if (!this.school) return []
+				// 接口成功后以乐学喵实际招生专业为准；失败回退本地研招网目录
+				if (this.useRemote && this.remoteMajors) return this.remoteMajors
 				return majorsOf(this.school.code)
 			},
 			modeOptions() {
@@ -222,12 +233,22 @@
 			},
 			majorLabel() {
 				const m = majorByCode(this.majorCode)
-				return m ? m.name : (this.majorCode || '—')
+				if (m) return m.name
+				const hit = this.majorOptions.find((item) => item.code === this.majorCode)
+				return (hit && hit.name) || this.majorCode || '—'
+			},
+			majorIndex() {
+				const i = this.majorOptions.findIndex((item) => item.code === this.majorCode)
+				return i >= 0 ? i : 0
 			},
 			modeLabel() {
 				if (this.studyMode === 'parttime') return '非全日制'
 				if (this.studyMode === 'fulltime') return '全日制'
 				return '—'
+			},
+			modeIndex() {
+				const i = this.modeOptions.findIndex((item) => item.id === this.studyMode)
+				return i >= 0 ? i : 0
 			},
 			program() {
 				if (this.useRemote && this.remoteProgram) return this.remoteProgram
@@ -239,41 +260,15 @@
 				if (!this.school || !this.majorCode || !this.studyMode) return null
 				return findAdmission(this.school.code, this.year, this.majorCode, this.studyMode)
 			},
-			nationLine() {
-				if (this.useRemote && this.remoteNation) return this.remoteNation
-				if (!this.school || !this.majorCode) return null
-				return findNationLine(this.majorCode, this.year, this.school.province)
-			},
-			spotlight() {
-				const end = this.targetCohort || targetCohort()
-				if (this.nationLine && this.nationLine.total != null) {
-					const y = Number(end) || 0
-					return { label: y + ' 国家线', value: String(this.nationLine.total) }
+			feeInfo() {
+				const row = this.scoreRow || {}
+				const feeRow = this.latestRow || row
+				const prog = this.program || {}
+				const info = this.majorInfo || {}
+				return {
+					duration: this.displayText(feeRow.duration_text || row.duration_text || prog.durationText || info.duration),
+					tuition: this.displayText(feeRow.tuition_text || row.tuition_text || prog.tuitionText || this.tuitionFromInfo(info))
 				}
-				const row = this.scoreRow
-				if (row) {
-					const v = row.reexam_min_score != null ? row.reexam_min_score
-						: (row.reexamMinScore != null ? row.reexamMinScore
-							: (row.min_score != null ? row.min_score : row.minScore))
-					if (v != null && v !== '') {
-						const y = Number(row.year) || 0
-						const label = y ? (y + ' 院校分数线') : '院校分数线'
-						return { label, value: String(v) }
-					}
-				}
-				const adm = this.admission
-				if (adm && adm.reexamMinScore != null && adm.reexamMinScore !== '') {
-					return { label: '院校分数线', value: String(adm.reexamMinScore) }
-				}
-				return { label: end + ' 国家线', value: '—' }
-			},
-			spotlightSide() {
-				const end = this.targetCohort || targetCohort()
-				const scoreY = this.scoreRow && this.scoreRow.year ? Number(this.scoreRow.year) : 0
-				const yearBit = scoreY && scoreY !== end
-					? (end + ' · 数据' + scoreY)
-					: String(end)
-				return yearBit + ' · ' + this.modeLabel
 			},
 			latestRow() {
 				const rows = this.yearlyData || []
@@ -307,10 +302,7 @@
 			},
 			dash() {
 				const row = this.scoreRow || {}
-				const feeRow = this.latestRow || row
 				const adm = this.admission || {}
-				const prog = this.program || {}
-				const info = this.majorInfo || {}
 				const scoreLine = this.reexamScoreOnly(row, adm)
 				const lowest = this.fmt(row.min_score != null ? row.min_score : adm.minScore)
 				const highest = this.fmt(row.max_score != null ? row.max_score : adm.maxScore)
@@ -338,8 +330,6 @@
 				if (lineTotal != null && !isNaN(lowestNum) && lowestNum > lineTotal) {
 					diffNote = '高复试线 ' + (lowestNum - lineTotal) + ' 分'
 				}
-				const duration = this.displayText(feeRow.duration_text || row.duration_text || prog.durationText || info.duration)
-				const tuition = this.displayText(feeRow.tuition_text || row.tuition_text || prog.tuitionText || this.tuitionFromInfo(info))
 				return {
 					scoreYear: row.year || null,
 					scoreLine,
@@ -350,9 +340,7 @@
 					rate,
 					rateTone,
 					rateNote,
-					diffNote,
-					duration,
-					tuition
+					diffNote
 				}
 			},
 			cohortRangeHint() {
@@ -558,11 +546,19 @@
 				this.resetPack()
 				this.loadRemote()
 			},
+			onMajorPick(e) {
+				const item = this.majorOptions[Number(e.detail.value)]
+				if (item) this.pickMajor(item.code)
+			},
 			setMode(id) {
 				if (this.studyMode === id) return
 				this.studyMode = id
 				this.resetPack()
 				this.loadRemote()
+			},
+			onModePick(e) {
+				const item = this.modeOptions[Number(e.detail.value)]
+				if (item) this.setMode(item.id)
 			},
 			packKey() {
 				if (!this.school || !this.majorCode || !this.studyMode) return ''
@@ -654,6 +650,14 @@
 					this.remoteAdmission = data.admission
 				}
 				if (data.nationLine) this.remoteNation = data.nationLine
+				if (Array.isArray(data.majorOptions)) this.remoteMajors = data.majorOptions
+				// 当前专业在乐学喵该学习形式下无数据时，切到第一个实际招生的专业
+				if (this.remoteMajors && this.remoteMajors.length && !this.remoteMajors.some((m) => m.code === this.majorCode)) {
+					this.majorCode = this.remoteMajors[0].code
+					this.apiMajorCode = ''
+					this.$nextTick(() => this.loadRemote())
+					return
+				}
 				this.useRemote = true
 			},
 			/** 只读数据库里的招录，不再联网补数 */

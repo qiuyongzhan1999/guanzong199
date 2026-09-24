@@ -1,0 +1,75 @@
+﻿北京详情 school_name: 北京信息科技大学 id(college): 2466 campus_id: 1928
+
+=== 1) college-detail 加 year/cohort 参数 ===
+  {'year': 2023}: status=200 body={"code":200,"msg":"\u64cd\u4f5c\u6210\u529f","data":{"id":2466,"campus_id":1928,"school_name":"\u5317\u4eac\u4fe1\u606f\u79d1\u6280\u5927\u5b66","school_logo":"
+  {'year': '2023'}: status=200 body={"code":200,"msg":"\u64cd\u4f5c\u6210\u529f","data":{"id":2466,"campus_id":1928,"school_name":"\u5317\u4eac\u4fe1\u606f\u79d1\u6280\u5927\u5b66","school_logo":"
+  {'cohort': 2023}: status=200 body={"code":200,"msg":"\u64cd\u4f5c\u6210\u529f","data":{"id":2466,"campus_id":1928,"school_name":"\u5317\u4eac\u4fe1\u606f\u79d1\u6280\u5927\u5b66","school_logo":"
+  {'year': 2022}: status=200 body={"code":200,"msg":"\u64cd\u4f5c\u6210\u529f","data":{"id":2466,"campus_id":1928,"school_name":"\u5317\u4eac\u4fe1\u606f\u79d1\u6280\u5927\u5b66","school_logo":"
+  {'exam_year': 2023}: status=200 body={"code":200,"msg":"\u64cd\u4f5c\u6210\u529f","data":{"id":2466,"campus_id":1928,"school_name":"\u5317\u4eac\u4fe1\u606f\u79d1\u6280\u5927\u5b66","school_logo":"
+
+=== 2) 常见历史/趋势端点 ===
+  /score-line: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /history: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /score: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /trend: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /score-trend: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /college-score: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /college-detail/score: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /admission: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /college-admission: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /college: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /detail: status=200 body={
+    "code": 201,
+    "msg": "\u9662\u6821\u4e0d\u5b58\u5728"
+}
+  /college-detail/history: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /score-line/list: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+  /college-score-line: status=200 body={
+    "code": 201,
+    "msg": "\u8be5\u529f\u80fd\u6682\u672a\u5f00\u53d1\uff0c\u656c\u8bf7\u671f\u5f85\uff01"
+}
+
+=== 3) 乐学喵 PC 网页详情页 ===
+  https://www.lexuemiao.com/college/2466: status=200 len=11176 含2022/2023=False title=
+  https://www.lexuemiao.com/school/2466: status=200 len=11176 含2022/2023=False title=
+  https://www.lexuemiao.com/detail/2466: status=200 len=11176 含2022/2023=False title=
+  https://www.lexuemiao.com/: status=200 len=11176 含2022/2023=False title=
+  https://www.lexuemiao.com/campus/2466: status=200 len=11176 含2022/2023=False title=
+
+探测完成

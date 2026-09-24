@@ -1,0 +1,57 @@
+=== 清库 ===
+清库：year_stats=897 bands=3324 admission_stats=853 packs=299 programs=897
+MPAcc会计 fulltime: 入库299 未匹配7 重复跳过0
+MPAcc会计 parttime: 入库135 未匹配1 重复跳过0
+MAud审计 fulltime: 入库65 未匹配1 重复跳过0
+MAud审计 parttime: 入库13 未匹配0 重复跳过0
+MLis图书情报 fulltime: 入库86 未匹配1 重复跳过0
+MLis图书情报 parttime: 入库21 未匹配0 重复跳过0
+MBA工商管理 fulltime: 入库119 未匹配4 重复跳过0
+MBA工商管理 parttime: 入库284 未匹配15 重复跳过0
+MPA公共管理 fulltime: 入库95 未匹配5 重复跳过0
+MPA公共管理 parttime: 入库276 未匹配7 重复跳过0
+MEM工程管理 fulltime: 入库48 未匹配2 重复跳过0
+MEM工程管理 parttime: 入库159 未匹配2 重复跳过0
+项目管理MEM fulltime: 入库4 未匹配0 重复跳过3
+项目管理MEM parttime: 入库4 未匹配1 重复跳过19
+MTA旅游管理 fulltime: 入库117 未匹配2 重复跳过0
+MTA旅游管理 parttime: 入库91 未匹配0 重复跳过0
+
+=== 汇总 ===
+  MPAcc会计(125300)fulltime: 299所
+  MPAcc会计(125300)parttime: 135所
+  MAud审计(125700)fulltime: 65所
+  MAud审计(125700)parttime: 13所
+  MLis图书情报(125500)fulltime: 86所
+  MLis图书情报(125500)parttime: 21所
+  MBA工商管理(125100)fulltime: 119所
+  MBA工商管理(125100)parttime: 284所
+  MPA公共管理(125200)fulltime: 95所
+  MPA公共管理(125200)parttime: 276所
+  MEM工程管理(125600)fulltime: 48所
+  MEM工程管理(125600)parttime: 159所
+  项目管理MEM(125600)fulltime: 4所
+  项目管理MEM(125600)parttime: 4所
+  MTA旅游管理(125400)fulltime: 117所
+  MTA旅游管理(125400)parttime: 91所
+
+=== school_year_stats 分布 ===
+  125100 fulltime: 119所学校 357行
+  125100 parttime: 284所学校 852行
+  125200 fulltime: 95所学校 285行
+  125200 parttime: 276所学校 828行
+  125300 fulltime: 299所学校 897行
+  125300 parttime: 135所学校 405行
+  125400 fulltime: 117所学校 351行
+  125400 parttime: 91所学校 273行
+  125500 fulltime: 86所学校 258行
+  125500 parttime: 21所学校 63行
+  125600 fulltime: 52所学校 156行
+  125600 parttime: 163所学校 489行
+  125700 fulltime: 65所学校 195行
+  125700 parttime: 13所学校 39行
+
+总行数=5448 有复试线=5017 有最低分=2558 有录取数=1339
+来源为空的残留行=0（应为0）
+
+完成

@@ -8,3 +8,8 @@ server/local-secrets.ps1
 server/.deepseek_key
 questions.json
 server/sql/_q1.json
+
+# 大文件 / 运行期缓存（不入库）
+data/pipeline/ecdict.csv
+data/pipeline/*.zip
+data/audio-cache/

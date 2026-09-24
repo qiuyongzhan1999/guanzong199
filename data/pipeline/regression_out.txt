@@ -1,0 +1,51 @@
+﻿========== A. 16 组列表接口 ==========
+  会计MPAcc/全日制: total=302 items=50
+  会计MPAcc/非全日制: total=136 items=50
+  审计MAud/全日制: total=65 items=50
+  审计MAud/非全日制: total=13 items=13
+  图书情报MLis/全日制: total=87 items=50
+  图书情报MLis/非全日制: total=21 items=21
+  工商管理MBA/全日制: total=122 items=50
+  工商管理MBA/非全日制: total=289 items=50
+  公共管理MPA/全日制: total=100 items=50
+  公共管理MPA/非全日制: total=283 items=50
+  工程管理MEM/全日制: total=54 items=50
+  工程管理MEM/非全日制: total=165 items=50
+  旅游管理MTA/全日制: total=119 items=50
+  旅游管理MTA/非全日制: total=91 items=50
+
+========== B. 库一致性：列表出现的学校是否真有该专业 ==========
+  [OK ] 会计MPAcc/全日制: 抽查150所，缺专业记录 0 所 []
+  [OK ] 会计MPAcc/非全日制: 抽查136所，缺专业记录 0 所 []
+  [OK ] 审计MAud/全日制: 抽查65所，缺专业记录 0 所 []
+  [OK ] 审计MAud/非全日制: 抽查13所，缺专业记录 0 所 []
+  [OK ] 图书情报MLis/全日制: 抽查87所，缺专业记录 0 所 []
+  [OK ] 图书情报MLis/非全日制: 抽查21所，缺专业记录 0 所 []
+  [OK ] 工商管理MBA/全日制: 抽查122所，缺专业记录 0 所 []
+  [OK ] 工商管理MBA/非全日制: 抽查150所，缺专业记录 0 所 []
+  [OK ] 公共管理MPA/全日制: 抽查100所，缺专业记录 0 所 []
+  [OK ] 公共管理MPA/非全日制: 抽查150所，缺专业记录 0 所 []
+  [OK ] 工程管理MEM/全日制: 抽查54所，缺专业记录 0 所 []
+  [OK ] 工程管理MEM/非全日制: 抽查150所，缺专业记录 0 所 []
+  [OK ] 旅游管理MTA/全日制: 抽查119所，缺专业记录 0 所 []
+  [OK ] 旅游管理MTA/非全日制: 抽查91所，缺专业记录 0 所 []
+
+========== C. 详情接口抽查（专业/学制/数据） ==========
+  [OK ] 川北医学院/图情/全日制: majorOptions含125500=True yearly=[2026, 2025, 2024] 2026复试线=199
+  [OK ] 川北医学院/MPA/全日制: majorOptions含125200=True yearly=[2026, 2025, 2024] 2026复试线=169
+  [OK ] 中国地质大学(北京)/会计/非全: majorOptions含125300=True yearly=[2026, 2025, 2024] 2026复试线=229
+  [OK ] 中国地质大学(武汉)/会计/非全: majorOptions含125300=True yearly=[2026, 2025, 2024] 2026复试线=199
+  [OK ] 北京大学/MBA/全日制: majorOptions含125100=True yearly=[2026, 2025, 2024] 2026复试线=146
+  [FAIL] 内蒙古大学/MPA/全日制: majorOptions含125200=False yearly=[] 2026复试线=None
+
+========== D. 数据覆盖：school_programs 三年 vs school_year_stats ==========
+  专业组合总数(去重): 1847
+  三年不齐的专业组合: 0
+
+========== E. school_year_stats 有但 school_programs 无（或反之） ==========
+  school_year_stats 无对应 program 行: 0
+  school_programs 无对应 stats 行: 0
+
+========== 结果 ==========
+发现 1 个问题:
+  - 内蒙古大学/MPA/全日制: majorOptions含125200=False yearly=[] 2026复试线=None

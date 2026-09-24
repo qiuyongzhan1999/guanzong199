@@ -14,13 +14,35 @@ Write-Host ""
 Write-Host "======== gz199 backend restart ========" -ForegroundColor Cyan
 Write-Host ("dir: " + $server)
 
-$jdk = "E:\workTool\java\jdk-17"
-$javaExe = Join-Path $jdk "bin\java.exe"
-if (-not (Test-Path $javaExe)) {
-    Write-Host ("JDK 17 not found: " + $jdk) -ForegroundColor Red
-    Write-Host "Install Temurin JDK 17 or edit jdk path in this script."
+# 家/公司 JDK 路径不同：按候选列表自动找，无需每次改脚本
+$jdkCandidates = @(
+    $env:JAVA_HOME,
+    "D:\java\jdk-17",                 # 常见：家用
+    "E:\workTool\java\jdk-17",        # 常见：公司
+    "C:\Program Files\Eclipse Adoptium\jdk-17*",
+    "C:\Program Files\Microsoft\jdk-17*",
+    "C:\Program Files\Java\jdk-17*"
+)
+$jdk = $null
+foreach ($cand in $jdkCandidates) {
+    if (-not $cand) { continue }
+    $resolved = @(Get-Item -Path $cand -ErrorAction SilentlyContinue | Sort-Object FullName -Descending)
+    foreach ($dir in $resolved) {
+        $exe = Join-Path $dir.FullName "bin\java.exe"
+        if (Test-Path $exe) {
+            $jdk = $dir.FullName
+            break
+        }
+    }
+    if ($jdk) { break }
+}
+if (-not $jdk) {
+    Write-Host "JDK 17 not found on this PC." -ForegroundColor Red
+    Write-Host "Install Temurin JDK 17, or set JAVA_HOME, or add path to `$jdkCandidates in this script."
     exit 1
 }
+$javaExe = Join-Path $jdk "bin\java.exe"
+Write-Host ("JDK: " + $jdk) -ForegroundColor Green
 $env:JAVA_HOME = $jdk
 $env:Path = "$env:JAVA_HOME\bin;" + $env:Path
 

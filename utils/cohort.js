@@ -6,9 +6,9 @@
  * 例：2026 ← 2025 年 12 月考试；2027 ← 2026 年 12 月考试。
  *
  * 展示截止到已经考过初试的最新入学年，等于当前日历年。
- * 2026 年 9 月时 2027 还没开考，近 5 年是 2022–2026。
+ * 乐学喵数据只覆盖近 3 年，窗口取 2024–2026。
  */
-export const COHORT_SPAN = 5
+export const COHORT_SPAN = 3
 
 export function targetCohort(date) {
 	const d = date || new Date()

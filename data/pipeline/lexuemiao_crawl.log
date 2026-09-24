@@ -1,0 +1,34 @@
+=== MPAcc会计（major_id=28）fulltime ===
+  [跳过] MPAcc会计 fulltime 已有 306 所
+=== MPAcc会计（major_id=28）parttime ===
+  MPAcc会计 parttime: 列表136所 -> 详情136所
+=== MAud审计（major_id=29）fulltime ===
+  MAud审计 fulltime: 列表66所 -> 详情66所
+=== MAud审计（major_id=29）parttime ===
+  MAud审计 parttime: 列表13所 -> 详情13所
+=== MLis图书情报（major_id=30）fulltime ===
+  MLis图书情报 fulltime: 列表87所 -> 详情87所
+=== MLis图书情报（major_id=30）parttime ===
+  MLis图书情报 parttime: 列表21所 -> 详情21所
+=== MBA工商管理（major_id=31）fulltime ===
+  MBA工商管理 fulltime: 列表123所 -> 详情123所
+=== MBA工商管理（major_id=31）parttime ===
+  MBA工商管理 parttime: 列表299所 -> 详情299所
+=== MPA公共管理（major_id=32）fulltime ===
+  MPA公共管理 fulltime: 列表100所 -> 详情100所
+=== MPA公共管理（major_id=32）parttime ===
+  MPA公共管理 parttime: 列表283所 -> 详情283所
+=== MEM工程管理（major_id=33）fulltime ===
+  MEM工程管理 fulltime: 列表50所 -> 详情50所
+=== MEM工程管理（major_id=33）parttime ===
+  MEM工程管理 parttime: 列表161所 -> 详情161所
+=== 项目管理MEM（major_id=34）fulltime ===
+  项目管理MEM fulltime: 列表7所 -> 详情7所
+=== 项目管理MEM（major_id=34）parttime ===
+  项目管理MEM parttime: 列表24所 -> 详情24所
+=== MTA旅游管理（major_id=35）fulltime ===
+  MTA旅游管理 fulltime: 列表119所 -> 详情119所
+=== MTA旅游管理（major_id=35）parttime ===
+  MTA旅游管理 parttime: 列表91所 -> 详情91所
+
+全部完成，共 1886 条详情，位于 D:\123\gz199\data\pipeline\lexuemiao_dump

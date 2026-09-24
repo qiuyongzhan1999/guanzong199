@@ -1,0 +1,8 @@
+﻿agent-browser-win32-x64.exe : Missing arguments for: get text
+所在位置 C:\Program Files\nodejs\agent-browser.ps1:3 字符: 1
++ & "$basedir\node_modules\agent-browser\bin\agent-browser-win32-x64.ex ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Missing arguments for: get text:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Usage: agent-browser get text <selector>

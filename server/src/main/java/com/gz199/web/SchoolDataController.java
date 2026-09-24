@@ -211,12 +211,75 @@ public class SchoolDataController {
         body.put("source", useMysql ? "mysql" : "none");
         body.put("needsEnrich", false);
         body.put("majorCode", usedCode);
+        body.put("majorOptions", majorOptionsOf(schoolCode, studyMode, useMysql));
         if (pack != null) {
             body.put("examRules", pack.get("exam_rules"));
             body.put("dataSource", pack.get("data_source"));
             body.put("majorInfo", pack.get("major_info"));
         }
         return body;
+    }
+
+    @GetMapping("/schools")
+    public Map<String, Object> schools(
+            @RequestParam(defaultValue = "125300") String majorCode,
+            @RequestParam(defaultValue = "fulltime") String studyMode,
+            @RequestParam(required = false, defaultValue = "") String province,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(required = false, defaultValue = "all") String trait,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "20") int pageSize
+    ) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("page", page);
+        body.put("pageSize", pageSize);
+        body.put("source", "mysql");
+        if (!mysql.available()) {
+            body.put("items", List.of());
+            body.put("total", 0);
+            return body;
+        }
+        String code = detailCodes(majorCode).get(0);
+        int limit = Math.max(1, Math.min(pageSize, 50));
+        int offset = Math.max(0, page - 1) * limit;
+        body.put("items", mysql.listSchools(code, studyMode, province, keyword, trait, limit, offset));
+        body.put("total", mysql.countSchools(code, studyMode, province, keyword, trait));
+        return body;
+    }
+
+    /** 该校在该学习方式下乐学喵实际有数据的专业；为空则前端不展示任何专业卡片。 */
+    private List<Map<String, Object>> majorOptionsOf(String schoolCode, String studyMode, boolean useMysql) {
+        List<Map<String, Object>> options = new ArrayList<>();
+        if (!useMysql) return options;
+        for (Map<String, Object> row : mysql.listMajorsBySchool(schoolCode, studyMode)) {
+            String raw = String.valueOf(row.get("majorCode"));
+            String display = displayMajorCode(raw);
+            Map<String, Object> m = new HashMap<>();
+            m.put("code", display);
+            m.put("name", majorNameOf(display));
+            options.add(m);
+        }
+        return options;
+    }
+
+    private static String displayMajorCode(String code) {
+        if (code != null && code.startsWith("1256")) return "1256";
+        return code;
+    }
+
+    private static final Map<String, String> MAJOR_NAMES = Map.of(
+            "125100", "工商管理MBA",
+            "125200", "公共管理MPA",
+            "125300", "会计MPAcc",
+            "125400", "旅游管理MTA",
+            "125500", "图书情报MLis",
+            "1256", "工程管理MEM",
+            "125700", "审计MAud"
+    );
+
+    private static String majorNameOf(String code) {
+        String name = MAJOR_NAMES.get(code);
+        return name == null ? code : name;
     }
 
     @GetMapping("/years")

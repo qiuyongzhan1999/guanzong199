@@ -14,23 +14,44 @@
 				/>
 				<view class="edu-search-btn" @tap="reload">搜索</view>
 			</view>
-			<view class="edu-filters">
-				<picker mode="selector" :range="regions" range-key="name" :value="regionIndex" @change="onRegion">
-					<view class="edu-chip" :class="{ on: regionIndex > 0 }">{{ regions[regionIndex].name }}</view>
-				</picker>
-				<picker mode="selector" :range="modes" range-key="label" :value="modeIndex" @change="onMode">
-					<view class="edu-chip edu-chip-dropdown">
-						{{ modes[modeIndex].label }}
-						<text class="edu-arrow">▾</text>
-					</view>
-				</picker>
-				<view
-					class="edu-chip"
-					v-for="item in traits"
-					:key="item.id"
-					:class="{ on: trait === item.id }"
-					@tap="setTrait(item.id)"
-				>{{ item.label }}</view>
+
+			<view class="edu-filter-grid">
+				<view class="edu-filter-item">
+					<picker mode="selector" :range="regions" range-key="name" :value="regionIndex" @change="onRegion">
+						<view class="edu-filter-cell" :class="{ on: regionIndex > 0 }">
+							<text class="edu-filter-k">地区</text>
+							<text class="edu-filter-v">{{ regionLabel }}</text>
+							<text class="edu-filter-arrow">▾</text>
+						</view>
+					</picker>
+				</view>
+				<view class="edu-filter-item">
+					<picker mode="selector" :range="modes" range-key="label" :value="modeIndex" @change="onMode">
+						<view class="edu-filter-cell">
+							<text class="edu-filter-k">学制</text>
+							<text class="edu-filter-v">{{ modes[modeIndex].label }}</text>
+							<text class="edu-filter-arrow">▾</text>
+						</view>
+					</picker>
+				</view>
+				<view class="edu-filter-item">
+					<picker mode="selector" :range="traits" range-key="label" :value="traitIndex" @change="onTrait">
+						<view class="edu-filter-cell" :class="{ on: trait !== 'all' }">
+							<text class="edu-filter-k">特质</text>
+							<text class="edu-filter-v">{{ traits[traitIndex].label }}</text>
+							<text class="edu-filter-arrow">▾</text>
+						</view>
+					</picker>
+				</view>
+				<view class="edu-filter-item">
+					<picker mode="selector" :range="majors" range-key="name" :value="majorIndex" @change="onMajor">
+						<view class="edu-filter-cell on">
+							<text class="edu-filter-k">专业</text>
+							<text class="edu-filter-v">{{ majors[majorIndex].name }}</text>
+							<text class="edu-filter-arrow">▾</text>
+						</view>
+					</picker>
+				</view>
 			</view>
 		</view>
 
@@ -41,8 +62,8 @@
 		/>
 		<EmptyState
 			v-else-if="!loading && !list.length"
-			title="没有这个招生单位"
-			sub="换个校名，或把地区和特性改回不限。"
+			title="暂时没有院校数据"
+			sub="换个校名，或把专业、地区和学习形式改回不限。"
 		/>
 
 		<SchoolCard
@@ -56,12 +77,14 @@
 
 		<view class="edu-foot" v-if="loading">正在整理名单…</view>
 		<view class="edu-foot link" v-else-if="error && list.length" @tap="load(false)">这一页没读到，点此重试</view>
-		<view class="edu-foot" v-else-if="list.length">名单来自中国研究生招生信息网</view>
+		<view class="edu-foot" v-else-if="list.length">名单来自乐学猫院校库</view>
 	</view>
 </template>
 
 <script>
-	import { REGIONS, fetchSchoolPage, schoolLabels } from '../../utils/chsi.js'
+	import { REGIONS, schoolLabels } from '../../utils/chsi.js'
+	import { fetchSchools } from '../../utils/api.js'
+	import { MAJORS } from '../../utils/programs.js'
 	import SchoolCard from '../../components/ui/SchoolCard.vue'
 	import EmptyState from '../../components/ui/EmptyState.vue'
 
@@ -71,6 +94,8 @@
 			return {
 				keyword: '',
 				appliedKeyword: '',
+				majors: MAJORS,
+				majorIndex: 0,
 				regions: REGIONS,
 				regionIndex: 0,
 				studyMode: 'fulltime',
@@ -103,6 +128,16 @@
 		onReachBottom() {
 			this.load(false)
 		},
+		computed: {
+			traitIndex() {
+				const i = this.traits.findIndex((item) => item.id === this.trait)
+				return i >= 0 ? i : 0
+			},
+			regionLabel() {
+				const name = this.regions[this.regionIndex] && this.regions[this.regionIndex].name
+				return name === '全部地区' ? '不限' : name
+			}
+		},
 		methods: {
 			labels: schoolLabels,
 			errorText() {
@@ -129,7 +164,8 @@
 			},
 			openDetail(item) {
 				if (!item.schId) return
-				uni.navigateTo({ url: '/pages/schools/detail?id=' + item.schId })
+				const majorCode = this.majors[this.majorIndex] ? this.majors[this.majorIndex].code : '125300'
+				uni.navigateTo({ url: '/pages/schools/detail?id=' + item.schId + '&mode=' + this.studyMode + '&major=' + majorCode })
 			},
 			onInput(e) {
 				this.keyword = e.detail.value
@@ -143,8 +179,13 @@
 				this.studyMode = this.modes[this.modeIndex].id
 				this.reload()
 			},
-			setTrait(id) {
-				this.trait = id
+			onTrait(e) {
+				const i = Number(e.detail.value)
+				this.trait = this.traits[i] ? this.traits[i].id : 'all'
+				this.reload()
+			},
+			onMajor(e) {
+				this.majorIndex = Number(e.detail.value)
 				this.reload()
 			},
 			reload() {
@@ -165,15 +206,17 @@
 				}
 				this.loading = true
 				const region = this.regions[this.regionIndex]
-				const traitOn = this.trait !== 'all'
-				return fetchSchoolPage({
-					yxmc: this.appliedKeyword,
-					ssdm: region.code,
-					ylgx: traitOn && this.trait === 'ylgx' ? '1' : '',
-					yjsy: traitOn && this.trait === 'yjsy' ? '1' : '',
-					zhx: traitOn && this.trait === 'zhx' ? '1' : '',
-					start
-				}).then((batch) => {
+				const majorCode = this.majors[this.majorIndex] ? this.majors[this.majorIndex].code : '125300'
+				const page = Math.floor(start / 20) + 1
+				return fetchSchools({
+					keyword: this.appliedKeyword,
+					province: region.name === '全部地区' ? '' : region.name,
+					studyMode: this.studyMode,
+					trait: this.trait,
+					majorCode,
+					page
+				}).then((res) => {
+					const batch = (res && res.items) || []
 					if (seq !== this.seq) return
 					const base = reset ? [] : this.list.slice()
 					const seen = {}
@@ -206,15 +249,3 @@
 		}
 	}
 </script>
-
-<style>
-.edu-chip-dropdown {
-	display: inline-flex;
-	align-items: center;
-	gap: 4px;
-}
-.edu-arrow {
-	font-size: 12px;
-	opacity: 0.6;
-}
-</style>

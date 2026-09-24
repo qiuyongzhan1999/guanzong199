@@ -32,30 +32,6 @@
 
 		<view class="edu-section-head">
 			<view class="edu-section-bar" />
-			<text class="edu-section-title">刷题开练</text>
-			<text class="edu-section-hint">每天一套</text>
-		</view>
-		<view class="edu-home-grid">
-			<view
-				class="edu-tile edu-tile-drill"
-				v-for="item in drills"
-				:key="item.title"
-				:class="'tone-' + item.tone"
-				@tap="open(item)"
-			>
-				<view class="edu-tile-top">
-					<view class="edu-tile-tag" :class="'tone-' + item.tone">
-						<text>{{ item.tag }}</text>
-					</view>
-					<text class="edu-go">›</text>
-				</view>
-				<text class="edu-tile-title">{{ item.title }}</text>
-				<text class="edu-tile-sub">{{ item.sub }}</text>
-			</view>
-		</view>
-
-		<view class="edu-section-head">
-			<view class="edu-section-bar" />
 			<text class="edu-section-title">择校找校</text>
 			<text class="edu-section-hint">先看稳冲难</text>
 		</view>
@@ -103,6 +79,27 @@
 				<text class="edu-go">›</text>
 			</view>
 		</view>
+
+		<view class="edu-section-head">
+			<view class="edu-section-bar tone-good" />
+			<text class="edu-section-title">背单词</text>
+		</view>
+		<view class="edu-home-row">
+			<view
+				class="edu-tile edu-tile-wide"
+				v-for="item in words"
+				:key="item.title"
+				:class="'tone-' + item.tone"
+				@tap="open(item)"
+			>
+				<text class="edu-mark edu-tile-mark" :class="'tone-' + item.tone">{{ item.mark }}</text>
+				<view class="edu-tile-copy">
+					<text class="edu-tile-title">{{ item.title }}</text>
+					<text class="edu-tile-sub">{{ item.sub }}</text>
+				</view>
+				<text class="edu-go">›</text>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -115,10 +112,6 @@
 					{ label: '逻辑', value: '60', tone: 'good' },
 					{ label: '写作', value: '65', tone: 'heat' }
 				],
-				drills: [
-					{ tag: '刷题', title: '去刷题', sub: '数学 · 逻辑 · 英语二', url: '/pages/practice/index', tone: 'signal' },
-					{ tag: '错题', title: '错题本', sub: '连对 2 次自动移出', url: '/pages/practice/wrong', tone: 'heat' }
-				],
 				schools: [
 					{ mark: '择', title: '智能择校', sub: '稳冲难一眼看清', url: '/pages/intent/index', tone: 'signal' },
 					{ mark: '校', title: '院校库', sub: '搜校名 · 查分数', tab: '/pages/schools/index', tone: 'signal' }
@@ -126,6 +119,10 @@
 				essays: [
 					{ mark: '批', title: 'AI 批改', sub: '写作 / 英语作文先改一版', url: '/pages/ai-essay/index', tone: 'heat' },
 					{ mark: '人', title: '人工批改', sub: '加微信，老师一对一盯卷', url: '/pages/ai-essay/human', tone: 'good' }
+				],
+				words: [
+					{ mark: '词', title: '背单词', sub: '考研核心词汇 · 真人发音', url: '/pages/words/learn', tone: 'good' },
+					{ mark: '队', title: '组队打卡', sub: '和小伙伴一起坚持', url: '/pages/words/team', tone: 'signal' }
 				]
 			}
 		},

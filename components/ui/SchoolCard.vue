@@ -11,7 +11,6 @@
 		<view class="edu-profile-copy">
 			<view class="edu-name-row">
 				<text class="edu-name">{{ item.name }}</text>
-				<text class="edu-prov" v-if="item.province">{{ item.province }}</text>
 			</view>
 			<text class="edu-sub" v-if="meta">{{ meta }}</text>
 			<view class="edu-tags" v-if="tags.length">

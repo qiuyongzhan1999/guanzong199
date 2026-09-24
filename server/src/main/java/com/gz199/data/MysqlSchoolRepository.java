@@ -224,7 +224,7 @@ public class MysqlSchoolRepository {
                 """,
                 schoolCode, majorCode, studyMode
         );
-        if (heads.isEmpty()) return null;
+        if (heads.isEmpty()) return loadYearlyDirect(schoolCode, majorCode, studyMode);
         Map<String, Object> pack = new HashMap<>(heads.get(0));
         Object packId = pack.remove("id");
         Object majorInfo = pack.remove("major_info_json");
@@ -430,6 +430,165 @@ public class MysqlSchoolRepository {
         return jdbc.queryForList(
             "SELECT school_code AS schoolCode, major_code AS majorCode, major_name AS majorName, study_mode AS studyMode FROM school_catalog WHERE school_code=?",
             schoolCode
+        );
+    }
+
+    /**
+     * 无 pack 记录时兜底：直接按学校+专业+学习方式读 school_year_stats（乐学喵数据），
+     * 避免"有分数但详情页不显示"。
+     */
+    public Map<String, Object> loadYearlyDirect(String schoolCode, String majorCode, String studyMode) {
+        List<Map<String, Object>> years = jdbc.queryForList(
+                """
+                SELECT year, status, tuition_text, plan_text, duration_text,
+                       program_source_url, program_source_name,
+                       reexam_min_score, min_score, max_score, admit_count, reexam_count,
+                       nation_a_total, nation_a_english, nation_a_comprehensive,
+                       nation_b_total, nation_b_english, nation_b_comprehensive,
+                       nation_source_url, nation_source_name,
+                       admission_source_url, admission_source_name,
+                       pending_note, score_bands_json, data_confidence
+                FROM school_year_stats
+                WHERE school_code=? AND major_code=? AND study_mode=?
+                ORDER BY year DESC
+                """,
+                schoolCode, majorCode, studyMode
+        );
+        if (years.isEmpty()) return null;
+        Map<String, Object> pack = new HashMap<>();
+        pack.put("schoolCode", schoolCode);
+        pack.put("majorCode", majorCode);
+        pack.put("studyMode", studyMode);
+        List<Map<String, Object>> yearly = new ArrayList<>();
+        for (Map<String, Object> y : years) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("year", y.get("year"));
+            row.put("status", y.get("status"));
+            row.put("tuition_text", y.get("tuition_text"));
+            row.put("plan_text", y.get("plan_text"));
+            row.put("duration_text", y.get("duration_text"));
+            row.put("program_source_url", y.get("program_source_url"));
+            row.put("program_source_name", y.get("program_source_name"));
+            row.put("reexam_min_score", y.get("reexam_min_score"));
+            row.put("min_score", y.get("min_score"));
+            row.put("max_score", y.get("max_score"));
+            row.put("admit_count", y.get("admit_count"));
+            row.put("reexam_count", y.get("reexam_count"));
+            row.put("nation_a_total", y.get("nation_a_total"));
+            row.put("nation_a_english", y.get("nation_a_english"));
+            row.put("nation_a_comprehensive", y.get("nation_a_comprehensive"));
+            row.put("nation_b_total", y.get("nation_b_total"));
+            row.put("nation_b_english", y.get("nation_b_english"));
+            row.put("nation_b_comprehensive", y.get("nation_b_comprehensive"));
+            row.put("nation_source_url", y.get("nation_source_url"));
+            row.put("nation_source_name", y.get("nation_source_name"));
+            row.put("admission_source_url", y.get("admission_source_url"));
+            row.put("admission_source_name", y.get("admission_source_name"));
+            row.put("pending_note", y.get("pending_note"));
+            row.put("data_confidence", y.get("data_confidence"));
+            Object bands = parseJson(y.get("score_bands_json"));
+            row.put("score_bands", bands instanceof List ? bands : Collections.emptyList());
+            yearly.add(row);
+        }
+        pack.put("yearly_data", yearly);
+        return pack;
+    }
+
+    /**
+     * 乐学喵院校列表：只返回该专业+学习方式在 school_year_stats 有真实招生数据的学校。
+     * 字段与前端 schools.json 卡片结构兼容（name/logo/schId/code/tags/province/authority/flags）。
+     */
+    public List<Map<String, Object>> listSchools(String majorCode, String studyMode, String province, String keyword, String trait, int limit, int offset) {
+        List<Object> args = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT DISTINCT s.sch_id AS schId, s.code AS code, s.name AS name, s.province AS province,
+                       s.city AS city, s.authority AS authority, s.logo_url AS logo,
+                       s.tags_json AS tags, s.flags_json AS flags,
+                       s.is_double_first AS doubleFirst, s.is_self_line AS selfLine,
+                       s.has_grad_school AS gradSchool
+                FROM school_year_stats y
+                JOIN schools s ON s.code = y.school_code
+                WHERE y.study_mode = ?
+                  AND y.major_code = ?
+                  AND (y.reexam_min_score IS NOT NULL OR y.min_score IS NOT NULL OR y.max_score IS NOT NULL
+                       OR y.admit_count IS NOT NULL OR y.reexam_count IS NOT NULL
+                       OR y.nation_a_total IS NOT NULL
+                       OR (y.tuition_text IS NOT NULL AND y.tuition_text NOT IN ('', '待查', '待同步')))
+                """);
+        args.add(studyMode);
+        args.add(majorCode);
+        if (province != null && !province.isBlank()) {
+            sql.append(" AND (s.province = ? OR s.province LIKE ?)");
+            args.add(province);
+            args.add(province + "%");
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND s.name LIKE ?");
+            args.add("%" + keyword + "%");
+        }
+        if (trait != null) {
+            switch (trait) {
+                case "ylgx" -> sql.append(" AND s.is_double_first = 1");
+                case "yjsy" -> sql.append(" AND s.has_grad_school = 1");
+                case "zhx" -> sql.append(" AND s.is_self_line = 1");
+                default -> { }
+            }
+        }
+        sql.append(" ORDER BY s.name LIMIT ? OFFSET ?");
+        args.add(limit);
+        args.add(offset);
+        List<Map<String, Object>> rows = jdbc.queryForList(sql.toString(), args.toArray());
+        for (Map<String, Object> row : rows) {
+            Object tags = parseJson(row.get("tags"));
+            Object flags = parseJson(row.get("flags"));
+            row.put("tags", tags instanceof List ? tags : List.of());
+            row.put("flags", flags instanceof List ? flags : List.of());
+            row.put("logoFailed", false);
+        }
+        return rows;
+    }
+
+    public int countSchools(String majorCode, String studyMode, String province, String keyword, String trait) {
+        List<Object> args = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+                SELECT COUNT(DISTINCT s.code)
+                FROM school_year_stats y
+                JOIN schools s ON s.code = y.school_code
+                WHERE y.study_mode = ?
+                  AND y.major_code = ?
+                  AND (y.reexam_min_score IS NOT NULL OR y.min_score IS NOT NULL OR y.max_score IS NOT NULL
+                       OR y.admit_count IS NOT NULL OR y.reexam_count IS NOT NULL
+                       OR y.nation_a_total IS NOT NULL
+                       OR (y.tuition_text IS NOT NULL AND y.tuition_text NOT IN ('', '待查', '待同步')))
+                """);
+        args.add(studyMode);
+        args.add(majorCode);
+        if (province != null && !province.isBlank()) {
+            sql.append(" AND (s.province = ? OR s.province LIKE ?)");
+            args.add(province);
+            args.add(province + "%");
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND s.name LIKE ?");
+            args.add("%" + keyword + "%");
+        }
+        if (trait != null) {
+            switch (trait) {
+                case "ylgx" -> sql.append(" AND s.is_double_first = 1");
+                case "yjsy" -> sql.append(" AND s.has_grad_school = 1");
+                case "zhx" -> sql.append(" AND s.is_self_line = 1");
+                default -> { }
+            }
+        }
+        Integer n = jdbc.queryForObject(sql.toString(), Integer.class, args.toArray());
+        return n == null ? 0 : n;
+    }
+
+    /** 该校在该学习方式下乐学喵实际有数据的专业（详情页专业方向以此为准，不招就不显示）。 */
+    public List<Map<String, Object>> listMajorsBySchool(String schoolCode, String studyMode) {
+        return jdbc.queryForList(
+                "SELECT DISTINCT major_code AS majorCode FROM school_year_stats WHERE school_code=? AND study_mode=? ORDER BY major_code",
+                schoolCode, studyMode
         );
     }
 }

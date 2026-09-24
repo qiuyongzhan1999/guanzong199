@@ -57,7 +57,7 @@ function collectYears() {
 	return cohortWindow(targetCohort())
 }
 
-/** 近 5 年 Tab：入学年；初试为上一自然年 12 月；不加「届」 */
+/** 近 3 年 Tab：入学年；初试为上一自然年 12 月；不加「届」 */
 export const YEARS = collectYears()
 export { targetCohort, cohortWindow } from './cohort.js'
 

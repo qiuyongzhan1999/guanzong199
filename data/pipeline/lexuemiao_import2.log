@@ -1,0 +1,64 @@
+=== 清库 ===
+清库：year_stats=5448 bands=8881 admission_stats=5091 packs=1816 programs=5448
+MPAcc会计 fulltime: 入库302 未匹配0 重复跳过4
+MPAcc会计 parttime: 入库136 未匹配0 重复跳过0
+MAud审计 fulltime: 入库65 未匹配0 重复跳过1
+MAud审计 parttime: 入库13 未匹配0 重复跳过0
+MLis图书情报 fulltime: 入库87 未匹配0 重复跳过0
+MLis图书情报 parttime: 入库21 未匹配0 重复跳过0
+MBA工商管理 fulltime: 入库121 未匹配1 重复跳过1
+  未匹配: 闽江学院
+MBA工商管理 parttime: 入库288 未匹配1 重复跳过10
+  未匹配: 闽江学院
+MPA公共管理 fulltime: 入库96 未匹配4 重复跳过0
+  未匹配: 重庆三峡学院, 防灾科技学院, 滨州医学院, 绍兴文理学院
+MPA公共管理 parttime: 入库280 未匹配3 重复跳过0
+  未匹配: 防灾科技学院, 滨州医学院, 绍兴文理学院
+MEM工程管理 fulltime: 入库49 未匹配1 重复跳过0
+  未匹配: 华北科技学院
+MEM工程管理 parttime: 入库160 未匹配1 重复跳过0
+  未匹配: 华北科技学院
+项目管理MEM fulltime: 入库4 未匹配0 重复跳过3
+项目管理MEM parttime: 入库4 未匹配0 重复跳过20
+MTA旅游管理 fulltime: 入库117 未匹配2 重复跳过0
+  未匹配: 榆林学院, 重庆三峡学院
+MTA旅游管理 parttime: 入库91 未匹配0 重复跳过0
+
+=== 汇总 ===
+  MPAcc会计(125300)fulltime: 302所
+  MPAcc会计(125300)parttime: 136所
+  MAud审计(125700)fulltime: 65所
+  MAud审计(125700)parttime: 13所
+  MLis图书情报(125500)fulltime: 87所
+  MLis图书情报(125500)parttime: 21所
+  MBA工商管理(125100)fulltime: 121所
+  MBA工商管理(125100)parttime: 288所
+  MPA公共管理(125200)fulltime: 96所
+  MPA公共管理(125200)parttime: 280所
+  MEM工程管理(125600)fulltime: 49所
+  MEM工程管理(125600)parttime: 160所
+  项目管理MEM(125600)fulltime: 4所
+  项目管理MEM(125600)parttime: 4所
+  MTA旅游管理(125400)fulltime: 117所
+  MTA旅游管理(125400)parttime: 91所
+
+=== school_year_stats 分布 ===
+  125100 fulltime: 121所学校 363行
+  125100 parttime: 288所学校 864行
+  125200 fulltime: 96所学校 288行
+  125200 parttime: 280所学校 840行
+  125300 fulltime: 302所学校 906行
+  125300 parttime: 136所学校 408行
+  125400 fulltime: 117所学校 351行
+  125400 parttime: 91所学校 273行
+  125500 fulltime: 87所学校 261行
+  125500 parttime: 21所学校 63行
+  125600 fulltime: 53所学校 159行
+  125600 parttime: 164所学校 492行
+  125700 fulltime: 65所学校 195行
+  125700 parttime: 13所学校 39行
+
+总行数=5502 有复试线=5070 有最低分=2584 有录取数=1352
+来源为空的残留行=0（应为0）
+
+完成

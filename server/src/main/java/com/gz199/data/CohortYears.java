@@ -10,10 +10,10 @@ import java.util.Map;
  * 考研届别：入学年。初试在上一自然年 12 月。
  * 例：2026 届 ← 2025-12 考试；2027 届 ← 2026-12 考试。
  * 展示截止到「已经考过初试」的最新届，等于当前日历年。
- * 2026 年 9 月时 2027 届的 12 月考试还没开始，近 5 届是 2022–2026。
+ * 乐学喵数据只覆盖近 3 年（2024–2026），故窗口取 3 届。
  */
 public final class CohortYears {
-    public static final int SPAN = 5;
+    public static final int SPAN = 3;
 
     private CohortYears() {}
 

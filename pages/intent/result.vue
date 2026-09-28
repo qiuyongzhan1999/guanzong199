@@ -38,6 +38,9 @@
 						@tap="toggleAdvice(block.title)"
 					>
 						<text class="edu-kicker">{{ blockTitle(block.title) }}<text class="edu-match-toggle">{{ isAdviceOpen(block.title) ? '收起' : '展开' }}</text></text>
+						<view class="edu-swipe-tip-row" v-if="block.title === '对照表'">
+							<text class="edu-swipe-tip">右滑可查看录取率及建议 →</text>
+						</view>
 						<scroll-view
 							v-if="block.title === '对照表' && tableOf(block.body)"
 							class="edu-match-table-scroll"
@@ -451,5 +454,18 @@
 	white-space: pre-wrap;
 	word-break: break-all;
 	font-family: monospace;
+}
+
+.edu-swipe-tip-row {
+	display: flex;
+	justify-content: flex-end;
+	margin: 4rpx 0 12rpx;
+}
+.edu-swipe-tip {
+	font-size: 22rpx;
+	color: #94a3b8;
+	background: #f1f5f9;
+	padding: 6rpx 16rpx;
+	border-radius: 999rpx;
 }
 </style>

@@ -118,6 +118,125 @@ export function ocrEssayImage(body) {
 	return post('/api/essay/ocr', body, 90000)
 }
 
+/** 是否 H5（浏览器）环境：只有 H5 支持 fetch 流式读取 SSE */
+function isH5() {
+	try {
+		return uni.getSystemInfoSync().uniPlatform === 'web'
+	} catch (e) {
+		return typeof window !== 'undefined' && typeof window.fetch === 'function'
+	}
+}
+
+/**
+ * 流式请求（SSE）：H5 用 fetch + ReadableStream 逐块解析；小程序/App 自动降级为原接口一次性返回。
+ * handlers: { onDelta(text, full), onDone(event), onError(message) }
+ * resolve(doneEvent) / reject(Error)
+ */
+export function streamPost(path, body, handlers, timeoutMs) {
+	const h = handlers || {}
+	const url = API_BASE.replace(/\/$/, '') + path
+
+	if (!isH5()) {
+		// 非 H5 降级：走原一次性接口（后端 stream 接口对普通请求也可返回完整 JSON 即可，这里直接调非流式接口）
+		const legacy = path.includes('/grade/stream')
+			? '/api/essay/grade'
+			: path.includes('/advice/stream') ? '/api/match/advice' : path.replace(/\/stream$/, '')
+		return post(legacy, body, timeoutMs || 120000).then((data) => {
+			if (h.onDelta) h.onDelta(JSON.stringify(data), JSON.stringify(data))
+			if (h.onDone) h.onDone(data)
+			return data
+		}).catch((e) => {
+			if (h.onError) h.onError((e && e.message) || '请求失败')
+			throw e
+		})
+	}
+
+	return new Promise((resolve, reject) => {
+		let settled = false
+		const finish = (fn, arg) => {
+			if (settled) return
+			settled = true
+			fn(arg)
+		}
+		let full = ''
+		fetch(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body || {})
+		}).then((resp) => {
+			if (!resp.ok) {
+				return resp.text().then((t) => {
+					throw new Error('HTTP ' + resp.status + (t ? ' ' + t.slice(0, 200) : ''))
+				})
+			}
+			if (!resp.body) throw new Error('浏览器不支持流式读取')
+			const reader = resp.body.getReader()
+			const decoder = new TextDecoder('utf-8')
+			let buf = ''
+
+			function handleChunk(chunk) {
+				let dataLine = ''
+				const lines = String(chunk).split('\n')
+				for (const line of lines) {
+					const t = line.trim()
+					if (t.startsWith('data:')) dataLine = t.slice(5).trim()
+				}
+				if (!dataLine || dataLine === '[DONE]') return
+				let ev
+				try {
+					ev = JSON.parse(dataLine)
+				} catch (e) {
+					return
+				}
+				if (ev.type === 'delta') {
+					const text = ev.text || ''
+					full += text
+					if (h.onDelta) h.onDelta(text, full)
+				} else if (ev.type === 'done') {
+					if (h.onDone) h.onDone(ev)
+					finish(resolve, ev)
+				} else if (ev.type === 'error') {
+					const msg = ev.message || '生成失败'
+					if (h.onError) h.onError(msg)
+					finish(reject, new Error(msg))
+				}
+			}
+
+			function pump() {
+				return reader.read().then(({ done, value }) => {
+					if (done) {
+						if (!settled) finish(reject, new Error('连接中断，未收到完整结果'))
+						return
+					}
+					buf += decoder.decode(value, { stream: true })
+					let idx
+					while ((idx = buf.indexOf('\n\n')) >= 0) {
+						const chunk = buf.slice(0, idx)
+						buf = buf.slice(idx + 2)
+						handleChunk(chunk)
+					}
+					return pump()
+				})
+			}
+			return pump()
+		}).catch((e) => {
+			const msg = (e && e.message) || '网络错误'
+			if (h.onError) h.onError(msg)
+			finish(reject, e)
+		})
+	})
+}
+
+/** AI 作文批改（流式） */
+export function gradeEssayStream(body, handlers) {
+	return streamPost('/api/essay/grade/stream', body, handlers, 180000)
+}
+
+/** 智能择校文字建议（流式） */
+export function matchAdviceStream(body, handlers) {
+	return streamPost('/api/match/advice/stream', body, handlers, 180000)
+}
+
 export function clearSchoolDetailCache() {
 	// 已取消前端详情缓存；保留空实现以免旧调用报错
 }

@@ -16,7 +16,12 @@
 			<view class="edu-card edu-advice-wait" v-if="adviceLoading">
 				<view class="edu-advice-wait-bar" />
 				<text class="edu-advice-wait-brand">智能择校</text>
-				<text class="edu-advice-wait-title edu-advice-pulse">根据学校历年分数线提供建议中{{ waitDots }}</text>
+				<text class="edu-advice-wait-title edu-advice-pulse">正在根据历年分数线写建议{{ waitDots }}</text>
+				<view class="edu-advice-stream" v-if="adviceStreamText">
+					<scroll-view scroll-y class="edu-advice-stream-body">
+						<text class="edu-advice-stream-text">{{ adviceStreamText }}</text>
+					</scroll-view>
+				</view>
 			</view>
 
 			<view class="edu-card" v-else-if="adviceBlocks.length || advice || adviceNote">
@@ -142,7 +147,7 @@
 </template>
 
 <script>
-	import { matchSchools, matchAdvice } from '../../utils/api.js'
+	import { matchSchools, matchAdviceStream } from '../../utils/api.js'
 	import SchoolCard from '../../components/ui/SchoolCard.vue'
 	import EmptyState from '../../components/ui/EmptyState.vue'
 	import StatRow from '../../components/ui/StatRow.vue'
@@ -155,6 +160,7 @@
 			return {
 				loading: true,
 				adviceLoading: false,
+				adviceStreamText: '',
 				error: '',
 				advice: '',
 				adviceBlocks: [],
@@ -349,24 +355,48 @@
 			async loadAdvice() {
 				if (!this.ranked.length) return
 				this.adviceLoading = true
+				this.adviceStreamText = ''
 				this.startDots()
 				try {
-					const data = await matchAdvice(this.matchBody)
-					this.advice = data.advice || ''
-					this.adviceBlocks = Array.isArray(data.adviceBlocks) ? data.adviceBlocks : []
-					this.adviceNote = data.adviceNote || ''
-					if (data.disclaimer) this.disclaimer = data.disclaimer
-					this.adviceOpenMap = {}
-					this.adviceOpen = true
-					if (!this.adviceBlocks.length && !this.advice && !this.adviceNote) {
-						this.adviceNote = '没有生成文字建议。列表仍按稳 → 冲 → 难排列。'
-					}
+					await matchAdviceStream(this.matchBody, {
+						onDelta: (text) => {
+							this.adviceStreamText += text
+						},
+						onDone: (ev) => {
+							const advice = (ev && ev.advice) || ''
+							this.advice = advice
+							this.adviceBlocks = this.layoutBlocks(advice)
+							this.adviceOpenMap = {}
+							this.adviceOpen = true
+							if (!this.adviceBlocks.length && !this.advice) {
+								this.adviceNote = '没有生成文字建议。列表仍按稳 → 冲 → 难排列。'
+							}
+						},
+						onError: (msg) => {
+							this.adviceNote = msg || '建议暂时没生成，可先看下方稳 / 冲 / 难列表。'
+						}
+					})
 				} catch (e) {
 					this.adviceNote = '建议暂时没生成，可先看下方稳 / 冲 / 难列表。'
 				} finally {
 					this.stopDots()
 					this.adviceLoading = false
 				}
+			},
+			layoutBlocks(raw) {
+				let text = String(raw || '').replace(/\r\n/g, '\n').trim()
+				text = text.replace(/^```[a-zA-Z]*\s*/gm, '').replace(/```/g, '')
+				text = text.replace(/\*\*/g, '').replace(/^#{1,6}\s*/gm, '').trim()
+				const rows = []
+				text.split('\n').forEach((line) => {
+					const t = line.trim()
+					if (t.startsWith('|')) rows.push(t)
+				})
+				const body = rows.join('\n').trim()
+				if (!body) {
+					return text ? [{ title: '对照表', body: text }] : []
+				}
+				return [{ title: '对照表', body }]
 			},
 			meta(item) {
 				const low = item.recentMinScores
@@ -402,3 +432,24 @@
 		}
 	}
 </script>
+
+<style scoped>
+.edu-advice-stream {
+	margin-top: 20rpx;
+	border-radius: 16rpx;
+	background: #fff;
+	padding: 20rpx;
+	border: 1rpx solid #e5e9f2;
+}
+.edu-advice-stream-body {
+	max-height: 400rpx;
+}
+.edu-advice-stream-text {
+	font-size: 25rpx;
+	line-height: 1.7;
+	color: #334155;
+	white-space: pre-wrap;
+	word-break: break-all;
+	font-family: monospace;
+}
+</style>

@@ -1,12 +1,30 @@
-package com.gz199.web;
+# -*- coding: utf-8 -*-
+"""EssayController 增加 POST /api/essay/grade/stream（SSE 流式批改）"""
+import io
 
-import com.gz199.ai.EssayGradeService;
+p = r"D:\123\gz199\server\src\main\java\com\gz199\web\EssayController.java"
+s = io.open(p, encoding="utf-8").read()
+
+if "grade/stream" in s:
+    print("ALREADY PATCHED")
+else:
+    # 1) imports
+    old_imp = '''import com.gz199.ai.EssayGradeService;
+import com.gz199.ai.EssayOcrService;
+import org.springframework.web.bind.annotation.PostMapping;'''
+    new_imp = '''import com.gz199.ai.EssayGradeService;
 import com.gz199.ai.EssayOcrService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;'''
+    assert old_imp in s
+    s = s.replace(old_imp, new_imp, 1)
+
+    old_imp2 = '''import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@RestController'''
+    new_imp2 = '''import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.HashMap;
@@ -14,20 +32,28 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@RestController
-@RequestMapping("/api/essay")
-public class EssayController {
+@RestController'''
+    assert old_imp2 in s
+    s = s.replace(old_imp2, new_imp2, 1)
+
+    # 2) 类内加 stream 池 + mapper
+    old_head = '''public class EssayController {
+    private final EssayGradeService essayGrade;'''
+    new_head = '''public class EssayController {
     private static final ExecutorService STREAM_POOL = Executors.newCachedThreadPool();
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private final EssayGradeService essayGrade;
-    private final EssayOcrService essayOcr;
+    private final EssayGradeService essayGrade;'''
+    assert old_head in s
+    s = s.replace(old_head, new_head, 1)
 
-    public EssayController(EssayGradeService essayGrade, EssayOcrService essayOcr) {
-        this.essayGrade = essayGrade;
-        this.essayOcr = essayOcr;
+    # 3) 在 grade 方法后加 gradeStream
+    old_grade = '''    /** AI 批改：粘贴正文 → DeepSeek 结构化阅卷反馈。 */
+    @PostMapping("/grade")
+    public Map<String, Object> grade(@RequestBody Map<String, Object> body) {
+        return essayGrade.grade(body == null ? Map.of() : body);
     }
-
-    /** AI 批改：粘贴正文 → DeepSeek 结构化阅卷反馈。 */
+'''
+    new_grade = '''    /** AI 批改：粘贴正文 → DeepSeek 结构化阅卷反馈。 */
     @PostMapping("/grade")
     public Map<String, Object> grade(@RequestBody Map<String, Object> body) {
         return essayGrade.grade(body == null ? Map.of() : body);
@@ -55,13 +81,6 @@ public class EssayController {
                     done.put("type", "done");
                     done.put("summary", out.get("summary"));
                     done.put("report", out.get("report"));
-                    done.put("disclaimer", out.get("disclaimer"));
-                    done.put("typeLabel", out.get("typeLabel"));
-                    done.put("wordCount", out.get("wordCount"));
-                    done.put("essay", out.get("essay"));
-                    done.put("hasEssayImage", out.get("hasEssayImage"));
-                    done.put("hasMaterialImage", out.get("hasMaterialImage"));
-                    done.put("inputMode", out.get("inputMode"));
                     emitJson(emitter, done);
                 }
             } catch (Exception e) {
@@ -92,13 +111,11 @@ public class EssayController {
         try {
             return MAPPER.writeValueAsString(payload);
         } catch (Exception e) {
-            return "{\"type\":\"error\",\"message\":\"serialize failed\"}";
+            return "{\\"type\\":\\"error\\",\\"message\\":\\"serialize failed\\"}";
         }
     }
-
-    /** 拍照识字：图片 base64 → DeepSeek 视觉模型 OCR。 */
-    @PostMapping("/ocr")
-    public Map<String, Object> ocr(@RequestBody Map<String, Object> body) {
-        return essayOcr.recognize(body == null ? Map.of() : body);
-    }
-}
+'''
+    assert old_grade in s
+    s = s.replace(old_grade, new_grade, 1)
+    io.open(p, "w", encoding="utf-8", newline="").write(s)
+    print("PATCHED EssayController")

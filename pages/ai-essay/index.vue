@@ -62,6 +62,17 @@
 		<view class="edu-btn" :class="{ off: !canSubmit || loading }" @tap="submit">
 			{{ loading ? '批改中…' : '开始 AI 批改' }}
 		</view>
+
+		<view class="edu-stream-panel" v-if="loading">
+			<view class="edu-stream-head">
+				<text class="edu-card-title">AI 正在批改…</text>
+				<text class="edu-hint">内容边生成边显示，请稍候</text>
+			</view>
+			<scroll-view scroll-y class="edu-stream-body">
+				<text class="edu-stream-text">{{ streamText || '正在连接 AI…' }}</text>
+			</scroll-view>
+		</view>
+
 		<view class="edu-essay-disclaimer">
 			<text class="edu-hint">名师式批改：先算清扣分，再给及格→高分→示范三层改法。</text>
 			<text class="edu-hint edu-essay-train-tip">AI 仅供参考：它是经过专业训练的哦</text>
@@ -70,7 +81,7 @@
 </template>
 
 <script>
-	import { gradeEssay } from '../../utils/api.js'
+	import { gradeEssayStream } from '../../utils/api.js'
 
 	const TYPES = [
 		{ id: 'argument', label: '论证有效性', hint: '管综写作 · 30 分 · 找逻辑缺陷', need: 'material', title: '题目材料', ph: '粘贴材料原文，或拍照上传（可选，建议提供）' },
@@ -90,7 +101,8 @@
 				materialImageFile: null,
 				essayImagePath: '',
 				essayImageFile: null,
-				loading: false
+				loading: false,
+				streamText: ''
 			}
 		},
 		computed: {
@@ -243,7 +255,7 @@
 			async submit() {
 				if (!this.canSubmit || this.loading) return
 				this.loading = true
-				uni.showLoading({ title: '阅卷中', mask: true })
+				this.streamText = ''
 				try {
 					const body = {
 						type: this.type,
@@ -283,21 +295,56 @@
 						body.materialMimeType = this.mimeFromPath(this.materialImagePath, this.materialImageFile)
 					}
 
-					const data = await gradeEssay(body)
-					if (data && data.error) {
-						uni.showToast({ title: data.error, icon: 'none', duration: 2800 })
-						return
-					}
-					uni.setStorageSync('essayGradeLatest', data)
-					uni.navigateTo({ url: '/pages/ai-essay/result' })
+					await gradeEssayStream(body, {
+						onDelta: (text) => {
+							this.streamText += text
+						},
+						onDone: (ev) => {
+							if (ev && ev.error) {
+								uni.showToast({ title: ev.error, icon: 'none', duration: 2800 })
+								return
+							}
+							uni.setStorageSync('essayGradeLatest', ev)
+							uni.navigateTo({ url: '/pages/ai-essay/result' })
+						},
+						onError: (msg) => {
+							uni.showToast({ title: msg || '批改失败', icon: 'none', duration: 2800 })
+						}
+					})
 				} catch (e) {
 					const msg = (e && (e.errMsg || e.message)) || '网络错误'
 					uni.showToast({ title: '失败：' + msg, icon: 'none' })
 				} finally {
-					uni.hideLoading()
 					this.loading = false
 				}
 			}
 		}
 	}
 </script>
+
+<style scoped>
+.edu-stream-panel {
+	margin-top: 24rpx;
+	border-radius: 20rpx;
+	background: #f5f7fb;
+	padding: 24rpx;
+	border: 1rpx solid #e5e9f2;
+}
+.edu-stream-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 16rpx;
+}
+.edu-stream-body {
+	max-height: 420rpx;
+}
+.edu-stream-text {
+	font-size: 24rpx;
+	line-height: 1.7;
+	color: #334155;
+	white-space: pre-wrap;
+	word-break: break-all;
+	font-family: monospace;
+}
+</style>

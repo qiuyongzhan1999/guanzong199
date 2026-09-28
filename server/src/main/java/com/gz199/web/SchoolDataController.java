@@ -6,12 +6,14 @@ import com.gz199.config.DeepSeekProperties;
 import com.gz199.data.CohortYears;
 import com.gz199.data.JsonDataStore;
 import com.gz199.data.MysqlSchoolRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,11 +21,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class SchoolDataController {
+    private static final ExecutorService STREAM_POOL = Executors.newCachedThreadPool();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     private final JsonDataStore store;
     private final MysqlSchoolRepository mysql;
     private final MatchAdviceService matchAdvice;
@@ -87,6 +93,54 @@ public class SchoolDataController {
     @PostMapping("/match/advice")
     public Map<String, Object> matchAdviceBody(@RequestBody Map<String, Object> body) {
         return matchAdvice.advise(body == null ? Map.of() : body);
+    }
+
+    /** 智能择校文字建议（流式 SSE）：边生成边推 delta，结束推 done，失败推 error。 */
+    @PostMapping("/match/advice/stream")
+    public SseEmitter matchAdviceStream(@RequestBody Map<String, Object> body) {
+        SseEmitter emitter = new SseEmitter(180_000L);
+        Map<String, Object> safe = body == null ? Map.of() : body;
+        STREAM_POOL.execute(() -> {
+            try {
+                String advice = matchAdvice.streamAdvice(safe, delta -> {
+                    try {
+                        emitter.send(SseEmitter.event().name("message")
+                                .data(toJson(Map.of("type", "delta", "text", delta))));
+                    } catch (Exception e) {
+                        throw new RuntimeException("client disconnected");
+                    }
+                });
+                emitJson(emitter, Map.of("type", "done", "advice", advice == null ? "" : advice));
+            } catch (Exception e) {
+                String msg = e.getMessage() == null ? "建议暂时生成失败" : e.getMessage();
+                if (msg.contains("client disconnected")) {
+                    // 客户端已断开
+                } else {
+                    try {
+                        emitJson(emitter, Map.of("type", "error", "message", msg.length() > 300 ? msg.substring(0, 300) : msg));
+                    } catch (Exception ignored) {
+                    }
+                }
+            } finally {
+                try {
+                    emitter.complete();
+                } catch (Exception ignored) {
+                }
+            }
+        });
+        return emitter;
+    }
+
+    private static void emitJson(SseEmitter emitter, Map<String, Object> payload) throws java.io.IOException {
+        emitter.send(SseEmitter.event().name("message").data(toJson(payload)));
+    }
+
+    private static String toJson(Map<String, Object> payload) {
+        try {
+            return MAPPER.writeValueAsString(payload);
+        } catch (Exception e) {
+            return "{\"type\":\"error\",\"message\":\"serialize failed\"}";
+        }
     }
 
     @GetMapping("/nation-lines")
